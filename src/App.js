@@ -18,7 +18,7 @@ import Dataset from './pages/Dataset'
 import Model from './pages/Model';
 import About from './pages/About';
 import ContactForm from './pages/Contact';
-// import SignIn from './pages/SignIn';
+import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 
 
@@ -35,7 +35,7 @@ export default function App(props) {
           <Route path="/model" element={<Model />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<ContactForm />} />
-          {/* <Route path="/signin" element={<SignIn />} /> */}
+          <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
         </Routes>
         <Divider />
