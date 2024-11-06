@@ -67,6 +67,7 @@ export default function SignUp(props) {
   const [passwordMatchError, setPasswordMatchError] = React.useState(false);
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+  const [showPassword1, setShowPassword1] = React.useState(false);
 
   const validateInputs = () => {
     const email = document.getElementById('email');
@@ -91,7 +92,7 @@ export default function SignUp(props) {
     // Password validation
     if (!password1.value || password1.value.length < 8) {
       setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 8 characters long.');
+      setPasswordErrorMessage('Password must be at least 8 characters long, one capital and one number.');
       isValid = false;
     } else if (password1.value !== password2.value) {
       setPasswordMatchError(true);
@@ -134,6 +135,10 @@ export default function SignUp(props) {
     return isValid;
   };
 
+  const handleTogglePassword1 = () => {
+    setShowPassword1((prev) => !prev);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -162,9 +167,9 @@ export default function SignUp(props) {
 
       const result = await response.json();
       if (result.isRegister) {
-        alert('Registration successful!');
+        alert('Registration successful! Please Proceed to Sign in.');
       } else {
-        alert('Registration failed!');
+        alert('Registration failed!', error);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -190,49 +195,49 @@ export default function SignUp(props) {
             sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
           >
             <FormControl>
-              <FormLabel htmlFor="username">User name</FormLabel>
+              <FormLabel htmlFor="username"></FormLabel>
               <TextField
                 autoComplete="username"
                 name="username"
                 required
                 fullWidth
                 id="username"
-                placeholder=""
+                placeholder="User Name"
                 error={nameError}
                 helperText={nameErrorMessage}
                 color={nameError ? 'error' : 'primary'}
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="first_name">First name</FormLabel>
+              <FormLabel htmlFor="first_name"></FormLabel>
               <TextField
                 autoComplete="first_name"
                 name="first_name"
                 required
                 fullWidth
                 id="first_name"
-                placeholder="John"
+                placeholder="First Name"
                 error={nameError}
                 helperText={nameErrorMessage}
                 color={nameError ? 'error' : 'primary'}
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="last_name">Last name</FormLabel>
+              <FormLabel htmlFor="last_name"></FormLabel>
               <TextField
                 autoComplete="last_name"
                 name="last_name"
                 required
                 fullWidth
                 id="last_name"
-                placeholder="Snow"
+                placeholder="Last name"
                 error={nameError}
                 helperText={nameErrorMessage}
                 color={nameError ? 'error' : 'primary'}
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="organization">Organization</FormLabel>
+              <FormLabel htmlFor="organization"></FormLabel>
               <TextField
                 autoComplete="organization"
                 name="organization"
@@ -246,12 +251,12 @@ export default function SignUp(props) {
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="email"></FormLabel>
               <TextField
                 required
                 fullWidth
                 id="email"
-                placeholder="your@email.com"
+                placeholder="Email Address"
                 name="email"
                 autoComplete="email"
                 variant="outlined"
@@ -261,13 +266,13 @@ export default function SignUp(props) {
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="password1">Password</FormLabel>
+              <FormLabel htmlFor="password1"></FormLabel>
               <TextField
                 required
                 fullWidth
                 name="password1"
-                placeholder="••••••••"
-                type="password"
+                placeholder="Password"
+                type={showPassword1 ? 'text' : 'password'}
                 id="password1"
                 autoComplete="new-password"
                 variant="outlined"
@@ -275,14 +280,18 @@ export default function SignUp(props) {
                 helperText={passwordErrorMessage}
                 color={passwordError ? 'error' : 'primary'}
               />
+              <FormControlLabel
+          control={<Checkbox checked={showPassword1} onChange={handleTogglePassword1} />}
+          label="Show Password"
+        />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="password2">Confirm Password</FormLabel>
+              <FormLabel htmlFor="password2"></FormLabel>
               <TextField
                 required
                 fullWidth
                 name="password2"
-                placeholder="••••••••"
+                placeholder="Confirm Password"
                 type="password"
                 id="password2"
                 autoComplete="new-password"

@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import CssBaseline from '@mui/material/CssBaseline';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Divider from '@mui/material/Divider';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
@@ -61,11 +60,13 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn(props) {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
+  const [usernameError, setusernameError] = React.useState(false);
+  const [usernameErrorMessage, setusernameErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
+
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -75,32 +76,60 @@ export default function SignIn(props) {
     setOpen(false);
   };
 
-  const handleSubmit = (event) => {
-    if (emailError || passwordError) {
+  const handleTogglePassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Prevent default form submission
+    if (usernameError || passwordError) {
       event.preventDefault();
       return;
     }
+  
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const username = data.get('username');
+    const password = data.get('password');
+  
+    try {
+      const response = await fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/login/', { // Update with your actual login endpoint
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+  
+      const result = await response.json();
+  
+      if (result.isLogin) {
+        // Store user info in local storage
+        localStorage.setItem('user', JSON.stringify(result.User));
+        // Optionally store token if your API uses token-based auth
+        // localStorage.setItem('token', result.token);
+        
+        // Redirect or update state to indicate user is logged in
+        // e.g., navigate to a dashboard or home page
+        window.location.href = '/'; // Update with your desired route
+      } else {
+        // Handle login failure (e.g., show an error message)
+        console.error('Login failed:', result);
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+    }
   };
 
   const validateInputs = () => {
-    const email = document.getElementById('email');
+    const username = document.getElementById('username');
     const password = document.getElementById('password');
 
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
-    }
+
+      setusernameError(false);
+      setusernameErrorMessage('');
+    
 
     if (!password.value || password.value.length < 6) {
       setPasswordError(true);
@@ -140,26 +169,26 @@ export default function SignIn(props) {
             }}
           >
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="username"></FormLabel>
               <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
-                id="email"
-                type="email"
-                name="email"
-                placeholder="your@email.com"
-                autoComplete="email"
+                error={usernameError}
+                helperText={usernameErrorMessage}
+                id="username"
+                type="username"
+                name="username"
+                placeholder="User Name"
+                autoComplete="username"
                 autoFocus
                 required
                 fullWidth
                 variant="outlined"
-                color={emailError ? 'error' : 'primary'}
-                sx={{ ariaLabel: 'email' }}
+                color={usernameError ? 'error' : 'primary'}
+                sx={{ ariaLabel: 'username' }}
               />
             </FormControl>
             <FormControl>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <FormLabel htmlFor="password">Password</FormLabel>
+                <FormLabel htmlFor="password"></FormLabel>
                 <Link
                   component="button"
                   type="button"
@@ -174,8 +203,8 @@ export default function SignIn(props) {
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 name="password"
-                placeholder="••••••"
-                type="password"
+                placeholder="Password"
+                type={showPassword ? 'text' : 'password'}
                 id="password"
                 autoComplete="current-password"
                 autoFocus
@@ -184,11 +213,12 @@ export default function SignIn(props) {
                 variant="outlined"
                 color={passwordError ? 'error' : 'primary'}
               />
+              <FormControlLabel
+          control={<Checkbox checked={showPassword} onChange={handleTogglePassword} />}
+          label="Show Password"
+        />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+            
             <ForgotPassword open={open} handleClose={handleClose} />
             <Button
               type="submit"

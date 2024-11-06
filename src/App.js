@@ -20,11 +20,13 @@ import About from './pages/About';
 import ContactForm from './pages/Contact';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
+import { AuthProvider } from './Auth';
 
 
 export default function App(props) {
   return (
     <Router>
+      <AuthProvider>
       <AppTheme {...props}>
         <CssBaseline enableColorScheme />
         <AppAppBar />
@@ -41,6 +43,7 @@ export default function App(props) {
         <Divider />
         <Footer />
       </AppTheme>
+      </AuthProvider>
     </Router>
   );
 }

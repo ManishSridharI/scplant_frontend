@@ -5,15 +5,10 @@ import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
-import Drawer from '@mui/material/Drawer';
-import MenuIcon from '@mui/icons-material/Menu';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ScPlantIcon from './scPlantIcon';
-import ColorModeIconDropdown from './ColorModeIconDropdown'
+import ColorModeIconDropdown from './ColorModeIconDropdown';
+import { useAuth } from '../Auth';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -32,12 +27,25 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 }));
 
 export default function AppAppBar() {
-  const [open, setOpen] = React.useState(false);
+  const { user, logout: authLogout } = useAuth(); 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-  const toggleDrawer = (newOpen) => () => {
-    setOpen(newOpen);
+      const data = await response.json(); // Parse the JSON response
+
+      if (data.isLogout) {
+        authLogout(); // Call the logout function from context to update state
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
-
   return (
     <AppBar
       position="fixed"
@@ -66,6 +74,9 @@ export default function AppAppBar() {
               <Button component={Link} to="/model" variant="text" color="info" size="large">
                 Models
               </Button>
+              <Button component={Link} to="/model" variant="text" color="info" size="large">
+                Results
+              </Button>
               <Button variant="text" target="_blank" href="https://github.com/ManishSridharI/scplant_backend" color="info" size="large">
                 GitHub
               </Button>
@@ -84,12 +95,29 @@ export default function AppAppBar() {
               alignItems: 'center',
             }}
           >
-            <Button component={Link} to="/signin" color="primary" variant="text" size="large">
+            {user ? (
+              <>
+              <span style={{color:'black'}}>Hello, {user.first_name}!!</span> {/* Display the user's first name */}
+              <Button onClick={handleLogout} color="primary" variant="contained" size="large">
+                Log out
+              </Button>
+            </>
+            ) : (
+              <>
+                <Button component={Link} to="/signin" color="primary" variant="text" size="large">
+                  Sign in
+                </Button>
+                <Button component={Link} to="/signup" color="primary" variant="contained" size="large">
+                  Sign up
+                </Button>
+              </>
+            )}
+            {/* <Button component={Link} to="/signin" color="primary" variant="text" size="large">
               Sign in
             </Button>
             <Button component={Link} to="/signup" color="primary" variant="contained" size="large">
               Sign up
-            </Button>
+            </Button> */}
             <ColorModeIconDropdown />
           </Box>
         </StyledToolbar>
