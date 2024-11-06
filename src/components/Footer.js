@@ -18,9 +18,7 @@ function Copyright() {
   return (
     <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
       {'Copyright © '}
-      <Link color="text.secondary" href="https://mui.com/">
-        Sitemark
-      </Link>
+        scPlant
       &nbsp;
       {new Date().getFullYear()}
     </Typography>
@@ -58,10 +56,10 @@ export default function Footer() {
           <Box sx={{ width: { xs: '100%', sm: '60%' } }}>
             <ScPlantIcon />
             <Typography variant="body2" gutterBottom sx={{ fontWeight: 600, mt: 2 }}>
-              Join the newsletter
+              Have questions?
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-              Subscribe for weekly updates. No spams ever!
+              Connect with us!
             </Typography>
             <InputLabel htmlFor="email-newsletter">Email</InputLabel>
             <Stack direction="row" spacing={1} useFlexGap>
@@ -87,7 +85,7 @@ export default function Footer() {
                 size="small"
                 sx={{ flexShrink: 0 }}
               >
-                Subscribe
+                Send
               </Button>
             </Stack>
           </Box>
@@ -100,22 +98,19 @@ export default function Footer() {
           }}
         >
           <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-            Product
+            Other Products
           </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
-            Features
+          <Link color="text.secondary" variant="body2" target="_blank" href="https://g2pdeep.org/">
+            G2PDeep
           </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Testimonials
+          <Link color="text.secondary" variant="body2" target="_blank" href="https://irnet.missouri.edu/">
+            IRNet
           </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Highlights
+          <Link color="text.secondary" variant="body2" target="_blank" href="https://kbcommons.org/">
+            KBCommons
           </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Pricing
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            FAQs
+          <Link color="text.secondary" variant="body2" target="_blank" href="https://soykb.org/">
+            SoyKB
           </Link>
         </Box>
         <Box
@@ -128,14 +123,11 @@ export default function Footer() {
           <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
             Company
           </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="/about">
             About us
           </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Careers
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Press
+          <Link color="text.secondary" variant="body2" href="/contact">
+            Contact
           </Link>
         </Box>
         <Box
@@ -146,17 +138,20 @@ export default function Footer() {
           }}
         >
           <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-            Legal
+            Team
           </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
-            Terms
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Privacy
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Contact
-          </Link>
+          <Typography color="text.secondary" variant="body2" href="#">
+            Chunyang Lu
+          </Typography>
+          <Typography color="text.secondary" variant="body2" href="#">
+            Manish Sridhar Immadi
+          </Typography>
+          <Typography color="text.secondary" variant="body2" href="#">
+            Yen On Chan
+          </Typography>
+          <Typography color="text.secondary" variant="body2" href="#">
+            Trupti Joshi
+          </Typography>
         </Box>
       </Box>
       <Box
@@ -169,18 +164,10 @@ export default function Footer() {
           borderColor: 'divider',
         }}
       >
-        <div>
-          <Link color="text.secondary" variant="body2" href="#">
-            Privacy Policy
-          </Link>
-          <Typography sx={{ display: 'inline', mx: 0.5, opacity: 0.5 }}>
-            &nbsp;•&nbsp;
-          </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
-            Terms of Service
-          </Link>
+       
+        
           <Copyright />
-        </div>
+        
         <Stack
           direction="row"
           spacing={1}
@@ -190,7 +177,8 @@ export default function Footer() {
           <IconButton
             color="inherit"
             size="small"
-            href="https://github.com/mui"
+            target="_blank"
+            href="https://github.com/ManishSridharI/scplant_backend"
             aria-label="GitHub"
             sx={{ alignSelf: 'center' }}
           >
@@ -199,7 +187,8 @@ export default function Footer() {
           <IconButton
             color="inherit"
             size="small"
-            href="https://x.com/MaterialUI"
+            target="_blank"
+            href="https://x.com/mizzou"
             aria-label="X"
             sx={{ alignSelf: 'center' }}
           >
@@ -208,7 +197,8 @@ export default function Footer() {
           <IconButton
             color="inherit"
             size="small"
-            href="https://www.linkedin.com/company/mui/"
+            target="_blank"
+            href="https://www.linkedin.com/school/university-of-missouri/"
             aria-label="LinkedIn"
             sx={{ alignSelf: 'center' }}
           >
