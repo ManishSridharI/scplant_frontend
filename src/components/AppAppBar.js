@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { styled, alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
@@ -27,7 +28,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
     ? `rgba(${theme.vars.palette.background.defaultChannel} / 0.4)`
     : alpha(theme.palette.background.default, 0.4),
   boxShadow: (theme.vars || theme).shadows[1],
-  padding: '16px 24px', 
+  padding: '16px 24px',
 }));
 
 export default function AppAppBar() {
@@ -52,24 +53,26 @@ export default function AppAppBar() {
       <Container maxWidth="lg">
         <StyledToolbar variant="dense" disableGutters>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
-            <ScPlantIcon />
+            <Link to="/">
+              <ScPlantIcon />
+            </Link>
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" color="info" size="large">
+              <Button component={Link} to="/intro" variant="text" color="info" size="large">
                 Introduction
               </Button>
-              <Button variant="text" color="info" size="large">
+              <Button component={Link} to="/dataset" variant="text" color="info" size="large">
                 Datasets
               </Button>
-              <Button variant="text" color="info" size="large">
+              <Button component={Link} to="/model" variant="text" color="info" size="large">
                 Models
               </Button>
-              <Button variant="text" color="info" size="large">
+              <Button variant="text" target="_blank" href="https://github.com/ManishSridharI/scplant_backend" color="info" size="large">
                 GitHub
               </Button>
-              <Button variant="text" color="info" size="large" sx={{ minWidth: 0 }}>
+              <Button component={Link} to="/about" variant="text" color="info" size="large" sx={{ minWidth: 0 }}>
                 About Us
               </Button>
-              <Button variant="text" color="info" size="large" sx={{ minWidth: 0 }}>
+              <Button component={Link} to="/contact" variant="text" color="info" size="large" sx={{ minWidth: 0 }}>
                 Contact
               </Button>
             </Box>
@@ -81,10 +84,10 @@ export default function AppAppBar() {
               alignItems: 'center',
             }}
           >
-            <Button color="primary" variant="text" size="large">
+            <Button component={Link} to="/signin" color="primary" variant="text" size="large">
               Sign in
             </Button>
-            <Button color="primary" variant="contained" size="large">
+            <Button component={Link} to="/signup" color="primary" variant="contained" size="large">
               Sign up
             </Button>
             <ColorModeIconDropdown />
