@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -9,7 +9,7 @@ import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
-
+import { useLocation } from 'react-router-dom';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 
@@ -17,60 +17,50 @@ const tiers = [
   {
     title: 'Regular',
     organism: 'Arabidopsis',
-    description: [
-      'Info',
-      'on',
-      'model',
-      'here',
-    ],
-    buttonText: 'Predict',
-    buttonVariant: 'outlined',
+    id: 1,
+    description: ['Info', 'on', 'model', 'here'],
+    buttonText: 'Select',
+    buttonVariant: 'contained',
     buttonColor: 'primary',
   },
   {
-    title: 'Accurate',
+    title: 'Regular',
     subheader: 'Our best model',
     organism: 'Zmays',
-    description: [
-      'Info',
-      'on',
-      'model',
-      'here',
-      '.',
-    ],
-    buttonText: 'Predict',
+    id: 2,
+    description: ['Info', 'on', 'model', 'here'],
+    buttonText: 'Select',
     buttonVariant: 'contained',
-    buttonColor: 'secondary',
+    buttonColor: 'primary',
   },
   {
     title: 'Regular',
     organism: 'Osativa',
-    description: [
-      'Info',
-      'on',
-      'model',
-      'here',
-    ],
-    buttonText: 'Predict',
-    buttonVariant: 'outlined',
+    id: 3,
+    description: ['Info', 'on', 'model', 'here'],
+    buttonText: 'Select',
+    buttonVariant: 'contained',
     buttonColor: 'primary',
   },
   {
     title: 'Regular',
     organism: 'GlycineMax',
-    description: [
-      'Info',
-      'on',
-      'model',
-      'here',
-    ],
-    buttonText: 'Predict',
-    buttonVariant: 'outlined',
+    id: 4,
+    description: ['Info', 'on', 'model', 'here'],
+    buttonText: 'Select',
+    buttonVariant: 'contained',
     buttonColor: 'primary',
   },
 ];
 
-export default function Models() {
+export default function Models({ onModelSelect }) {
+  const [selectedOrganism, setSelectedOrganism] = useState(null);
+  const handleButtonClick = (organism) => {
+    setSelectedOrganism(organism); // Update selected model
+    if (onModelSelect) {
+      onModelSelect(organism); // Pass the selected model to the parent
+    }
+  };
   return (
     <Container
       id="pricing"
@@ -111,44 +101,25 @@ export default function Models() {
         {tiers.map((tier) => (
           <Grid
             size={{ xs: 12, sm: tier.title === 'Regular' ? 12 : 6, md: 3 }}
-            key={tier.title}
+            key={tier.organism}
           >
             <Card
-              sx={[
-                {
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 4,
-                },
-                tier.title === 'Accurate' &&
-                  ((theme) => ({
-                    border: 'none',
-                    background:
-                      'radial-gradient(circle at 50% 0%, hsl(220, 20%, 35%), hsl(220, 30%, 6%))',
-                    boxShadow: `0 8px 12px hsla(220, 20%, 42%, 0.2)`,
-                    ...theme.applyStyles('dark', {
-                      background:
-                        'radial-gradient(circle at 50% 0%, hsl(220, 20%, 20%), hsl(220, 30%, 16%))',
-                      boxShadow: `0 8px 12px hsla(0, 0%, 0%, 0.8)`,
-                    }),
-                  })),
-              ]}
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+              }}
             >
               <CardContent>
                 <Box
-                  sx={[
-                    {
-                      mb: 1,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      gap: 2,
-                    },
-                    tier.title === 'Accurate'
-                      ? { color: 'grey.100' }
-                      : { color: '' },
-                  ]}
+                  sx={{
+                    mb: 1,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: 2,
+                  }}
                 >
                   {/* <Typography component="h3" variant="h6">
                     {tier.title}
@@ -206,13 +177,15 @@ export default function Models() {
                 ))}
               </CardContent>
               <CardActions>
-                <Button
+              <Button
                   fullWidth
                   variant={tier.buttonVariant}
-                  color={tier.buttonColor}
-                  onClick={() => console.log(`${tier.organism}  clicked!`)}
+                  color={selectedOrganism === tier.id ? 'secondary' : tier.buttonColor}
+                  onClick={() => handleButtonClick(tier.id)}
                 >
-                  {tier.buttonText}
+                  {selectedOrganism === tier.id
+                    ? 'Selected'
+                    : tier.buttonText}
                 </Button>
               </CardActions>
             </Card>

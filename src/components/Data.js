@@ -12,63 +12,55 @@ const items = [
   {
     icon: <InsightsIcon />,
     title: 'Arabidopsis (SRP 171)',
-    description:
-      'SRP 171',
-      genes:
-      '53,678',
-      cells:
-      '1.2M',
-      datasets:
-      '28',
-      cell_types:
-      '50',
+    dataset_info_id: 5,
+    description: 'SRP 171',
+    genes: '53,678',
+    cells: '1.2M',
+    datasets: '28',
+    cell_types: '50',
   },
   {
     icon: <InsightsIcon />,
     title: 'Zmays (SRP 335)',
-    description:
-      'SRP 335',
-      genes:
-      '67,300',
-      cells:
-      '35K',
-      datasets:
-      '9',
-      cell_types:
-      '38',
+    dataset_info_id: 6,
+    description: 'SRP 335',
+    genes: '67,300',
+    cells: '35K',
+    datasets: '9',
+    cell_types: '38',
   },
   {
     icon: <InsightsIcon />,
     title: 'Osativia (SRP 286)',
-    description:
-      'SRP 286',
-      genes:
-      '57,623',
-      cells:
-      '417K',
-      datasets:
-      '5',
-      cell_types:
-      '38',
+    dataset_info_id: 7,
+    description: 'SRP 286',
+    genes: '57,623',
+    cells: '417K',
+    datasets: '5',
+    cell_types: '38',
   },
   {
     icon: <InsightsIcon />,
-    title: 'GlycineMax (Floerbud)',
-    description:
-      'Flowerbud',
-      genes:
-      '56,044(Public), 41,780(Private)',
-      cells:
-      '25K(Public), 116k(Private)',
-      datasets:
-      '1(Public), 10(Private)',
-      cell_types:
-      '7(Public), 42(Private)',
+    title: 'GlycineMax (Flowerbud)',
+    dataset_info_id: 8,
+    description: 'Flowerbud',
+    genes: '56,044(Public), 41,780(Private)',
+    cells: '25K(Public), 116k(Private)',
+    datasets: '1(Public), 10(Private)',
+    cell_types: '7(Public), 42(Private)',
   },
-
 ];
 
-export default function Data() {
+
+export default function Data({ onDatasetClick }) {
+  const [selectedId, setSelectedId] = React.useState(null);
+
+  const handleDatasetClick = (datasetId) => {
+    setSelectedId(datasetId); // Update the selected ID
+    if (onDatasetClick) {
+      onDatasetClick(datasetId); // Trigger the parent handler if provided
+    }
+  };
   return (
     <Box
       id="highlights"
@@ -110,8 +102,11 @@ export default function Data() {
                 width: '100%',
                 textAlign: 'left',
                 display: 'block',
+                color: selectedId === item.dataset_info_id ? 'hsl(210, 100%, 35%)' : 'inherit',
               }}
-              onClick={() => console.log(`${item.title} button clicked!`)} // You can add your actual click handler here
+             // onClick={() => console.log(`${item.title} button clicked!`)} // You can add your actual click handler here
+              //onClick={() => onDatasetClick(item.dataset_info_id)}
+              onClick={() => handleDatasetClick(item.dataset_info_id)}
             >
               <Stack
                 direction="column"

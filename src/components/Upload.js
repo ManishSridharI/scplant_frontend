@@ -5,24 +5,38 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useState } from 'react';
+import { Grid2 } from '@mui/material';
+import { useAuth } from '../Auth';
 
 export default function Upload() {
+  const { user } = useAuth(); 
   const [file, setFile] = useState(null);
   const [driveLink, setDriveLink] = useState('');
+  const [datasetName, setDatasetName] = useState('');
+  const [description, setDescription] = useState('');
   const [errorMessage, setErrorMessage] = useState(''); 
+
+  const handleDatasetNameChange = (event) => {
+    setDatasetName(event.target.value);
+  };
+
+  const handleDescriptionChange = (event) => {
+    setDescription(event.target.value);
+  };
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    
+   
     if (selectedFile && selectedFile.size > 25 * 1024 * 1024) { // File size check for >25MB
       setErrorMessage('File size exceeds 25MB. Please provide a drive link.');
       setFile(null); // Reset file input
     } else {
       setErrorMessage(''); // Clear any previous error
       setFile(selectedFile); // Set file if size is valid
+      
     }
   };
-
+ 
   const handleLinkChange = (event) => {
     const value = event.target.value;
     // Check if the link starts with https
@@ -35,16 +49,38 @@ export default function Upload() {
   };
 
   const handleUpload = () => {
-    if (file) {
-      console.log('Uploading file:', file);
-      // Implement the actual upload logic here
+    if (file && user) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('dataset_name', datasetName);
+      formData.append('description', description);
+      formData.append('user_id', user.id);
+      console.log('FormData after append:', Array.from(formData.entries())); 
+      fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/upload/', { // Ensure the URL matches your backend's endpoint
+        method: 'POST',
+        body: formData,
+        
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            setErrorMessage(data.error);
+          } else {
+            console.log('File uploaded successfully:', data.path);
+          }
+        })
+        .catch((error) => {
+          setErrorMessage('Error uploading file.');
+          console.error(error);
+        });
     }
+  
     if (driveLink) {
       console.log('Drive link provided:', driveLink);
-      // Implement logic for handling the drive link here
+      // Add logic to handle drive link submission
     }
   };
-
+  
   return (
     <Container
       id="pricing"
@@ -78,6 +114,27 @@ export default function Upload() {
           maxWidth: 500,
         }}
       >
+         <Grid2 container spacing={2} sx={{ mt: 2 }}>
+        <Grid2 item xs={12} sm={6}>
+          <TextField
+            label="Dataset Name"
+            variant="outlined"
+            fullWidth
+            value={datasetName}
+            onChange={handleDatasetNameChange}
+            required
+          />
+        </Grid2>
+        <Grid2 item xs={12} sm={6}>
+          <TextField
+            label="Description (Optional)"
+            variant="outlined"
+            fullWidth
+            value={description}
+            onChange={handleDescriptionChange}
+          />
+        </Grid2>
+      </Grid2>
         <input
           accept=".h5ad" 
           id="file-upload"
@@ -107,16 +164,19 @@ export default function Upload() {
           onChange={handleLinkChange}
           helperText="Provide drive link if the file is larger than 25MB"
         />
+
+     
+
 {errorMessage && <Typography color="error">{errorMessage}</Typography>}
         <Button
           variant="contained"
-          color={file || driveLink ? "primary" : "inherit"} // Lighter color when no file or link
-          onClick={file || driveLink ? handleUpload : null} // Disable click when no file or link
+          color={(file || driveLink) && datasetName ? "primary" : "inherit"} // Lighter color when no file or link
+          onClick={(file || driveLink) && datasetName ? handleUpload : null} // Disable click when no file or link
           fullWidth
           sx={{
             mt:2,
-            backgroundColor: file || driveLink ? '' : 'grey.300', // Lighter background when disabled
-            cursor: file || driveLink ? 'pointer' : 'not-allowed', // Change cursor to 'not-allowed' if disabled
+            backgroundColor: (file || driveLink) && datasetName ? '' : 'grey.300', // Lighter background when disabled
+            cursor: (file || driveLink) && datasetName ? 'pointer' : 'not-allowed', // Change cursor to 'not-allowed' if disabled
           }}
         >
           Upload

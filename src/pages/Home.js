@@ -8,7 +8,7 @@ import { useAuth } from '../Auth';
 export default function Home(props) {
   const { user } = useAuth();
   if (user) {
-    console.log('Welcome', user.first_name);
+    console.log('Welcome', user);
   }
   return (
       <div>

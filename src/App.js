@@ -21,6 +21,7 @@ import ContactForm from './pages/Contact';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import { AuthProvider } from './Auth';
+import Results from './pages/Results';
 
 
 export default function App(props) {
@@ -35,6 +36,7 @@ export default function App(props) {
           <Route path="/intro" element={<Intro />} />
           <Route path="/dataset" element={<Dataset />} />
           <Route path="/model" element={<Model />} />
+          <Route path="/results" element={<Results />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<ContactForm />} />
           <Route path="/signin" element={<SignIn />} />
