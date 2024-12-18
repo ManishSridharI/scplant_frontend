@@ -37,8 +37,8 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 const SignUpContainer = styled(Stack)(({ theme }) => ({
-  height: 'calc((1 - var(--template-frame-height, 0)) * 120dvh)',
-  minHeight: '100%',
+  height: '100%',
+ 
   padding: theme.spacing(2),
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(4),
@@ -168,6 +168,7 @@ export default function SignUp(props) {
       const result = await response.json();
       if (result.isRegister) {
         alert('Registration successful! Please Proceed to Sign in.');
+        window.location.href = '/signin';
       } else {
         alert('Registration failed!', error);
       }

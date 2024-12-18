@@ -52,15 +52,10 @@ const items = [
 ];
 
 
-export default function Data({ onDatasetClick }) {
-  const [selectedId, setSelectedId] = React.useState(null);
+export default function DataHome() {
+  
 
-  const handleDatasetClick = (datasetId) => {
-    setSelectedId(datasetId); // Update the selected ID
-    if (onDatasetClick) {
-      onDatasetClick(datasetId); // Trigger the parent handler if provided
-    }
-  };
+  
   return (
     <Box
       id="pricing"
@@ -103,11 +98,9 @@ export default function Data({ onDatasetClick }) {
                 height: "100%",
                 textAlign: 'left',
                 display: 'block',
-                color: selectedId === item.dataset_info_id ? 'hsl(210, 100%, 35%)' : 'inherit',
+                color:  'inherit',
               }}
-             // onClick={() => console.log(`${item.title} button clicked!`)} // You can add your actual click handler here
-              //onClick={() => onDatasetClick(item.dataset_info_id)}
-              onClick={() => handleDatasetClick(item.dataset_info_id)}
+             
             >
               <Stack
                 direction="column"

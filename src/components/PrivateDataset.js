@@ -7,25 +7,49 @@ import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function PrivateData({ onDatasetSelect }) {
-  const { user } = useAuth(); // Get the logged-in user's info
+  const { user, csrfToken } = useAuth(); // Get the logged-in user's info and CSRF token
   const [datasets, setDatasets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
-  
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
+
   useEffect(() => {
-    if (user) {
-      fetch(`http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/user/${user.id}`) // Replace with your API endpoint
+    if (user && csrfToken) {
+      // Sending user.id as a query parameter
+      fetch(`http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_query/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,  // Set CSRF token in the header
+            // Send authentication token
+        },
+        credentials: 'include',  // Ensure cookies are included in the request
+      })
         .then((response) => response.json())
         .then((data) => {
-          setDatasets(data);
+          if (data.isDatasetQuery) {
+            // Map the dataset response to the structure required by the DataGrid
+            const formattedDatasets = data.Dataset.map(dataset => ({
+              id: dataset.id,
+              dataset_name: dataset.dataset_name,
+              dataset_file: dataset.dataset_file,
+              dataset_public_flag: dataset.dataset_public_flag ? 'Yes' : 'No', // Convert boolean to display-friendly value
+              dataset_creation_timestamp: new Date(dataset.dataset_creation_timestamp).toLocaleString(), // Format timestamp
+            }));
+            setDatasets(formattedDatasets);  // Set the formatted datasets to state
+          } else {
+            console.error('Error fetching datasets:', data.error);
+          }
           setLoading(false);
         })
         .catch((error) => {
           console.error('Error fetching datasets:', error);
           setLoading(false);
         });
+    } else {
+      console.error('User or CSRF token not found');
+      setLoading(false);
     }
-  }, [user]);
+  }, [user, csrfToken]);
 
   if (loading) {
     return <CircularProgress />;
@@ -37,9 +61,9 @@ export default function PrivateData({ onDatasetSelect }) {
 
   const columns = [
     { field: 'dataset_name', headerName: 'Dataset Name', flex: 1 },
-    // { field: 'num_samples', headerName: '# Samples', type: 'number', flex: 0.75 },
-    // { field: 'num_features', headerName: '# Features', type: 'number', flex: 0.75 },
-    { field: 'description', headerName: 'Description', flex: 1 },
+    // { field: 'dataset_file', headerName: 'File Path', flex: 1 },
+    { field: 'dataset_public_flag', headerName: 'Public', flex: 0.5 },
+    { field: 'dataset_creation_timestamp', headerName: 'Creation Date', flex: 1 },
   ];
 
   return (
@@ -47,7 +71,6 @@ export default function PrivateData({ onDatasetSelect }) {
       id="highlights"
       sx={{
         pt: { xs: 4, sm: 8 },
-        
       }}
     >
       <Container
@@ -59,57 +82,35 @@ export default function PrivateData({ onDatasetSelect }) {
           gap: { xs: 3, sm: 6 },
         }}
       >
-        <Typography variant="h5" component="h2" >
-        Your Datasets
-      </Typography>
-      <Typography variant="body2" sx={{ color: 'grey.600' }}>
-        To select a dataset, upload your file and then choose from the table below.
-      </Typography>
-    <div style={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={datasets}
-        columns={columns}
-        getRowId={(row) => row.dataset_info_id}
-        pageSize={5}
-        checkboxSelection
-        rowSelectionModel={rowSelectionModel}
-        onRowSelectionModelChange={(newRowSelectionModel) => {
-          setRowSelectionModel(newRowSelectionModel);
-      
-          const selectedDatasetIds = newRowSelectionModel.map((id) => id);
-          onDatasetSelect(selectedDatasetIds);
-        }}
-      //   onRowSelectionModelChange={(newRowSelectionModel) => {
-      //     // Update the row selection model state
-      //     setRowSelectionModel(newRowSelectionModel);
-      
-      //     // Find the selected datasets based on the new selection model
-      //     const selectedDatasets = datasets.filter((dataset) =>
-      //       newRowSelectionModel.includes(dataset.dataset_info_id)
-      //     );
-      // console.log(selectedDatasets);
-      //     // Notify the parent or handle the selected datasets
-      //     onDatasetSelect(selectedDatasets);
-      //   }}
-      //   // onSelectionModelChange={(ids) => {
-      //   //   const selected = datasets.find((dataset) => ids.includes(dataset.dataset_info_id));
-      //   //   onDatasetSelect(selected); // Notify parent of the selected dataset
-      //   // }}
-        rowsPerPageOptions={[5, 10, 20]}
-        sx={{
-            '& .MuiDataGrid-root': {
-              borderColor: 'black', // Set the border color for the entire grid
-            },
-            '& .MuiDataGrid-cell': {
-              borderColor: 'black', // Set the border color for cells
-            },
-            '& .MuiDataGrid-columnHeaders': {
-              borderColor: 'black', // Set the border color for column headers
-            },
-          }}
-      />
-    </div>
-    </Container>
+        <Typography variant="h5" component="h2">
+          Your Datasets
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'grey.600' }}>
+          To select a dataset, upload your file and then choose from the table below.
+        </Typography>
+        <Box sx={{ height: '100%', width: '100%' }}>
+          <DataGrid
+            rows={datasets}
+            columns={columns}
+            getRowId={(row) => row.id}  // Ensure rows are uniquely identified by `id`
+            pageSize={5}
+            checkboxSelection
+            rowSelectionModel={rowSelectionModel}
+            onRowSelectionModelChange={(newRowSelectionModel) => {
+              setRowSelectionModel(newRowSelectionModel);
+              const selectedDatasetIds = newRowSelectionModel.map((id) => id);
+              onDatasetSelect(selectedDatasetIds);
+            }}
+            rowsPerPageOptions={[5, 10, 20]}
+            autoHeight
+            sx={{
+              '& .MuiDataGrid-container--top [role="row"], & .MuiDataGrid-container--bottom [role="row"]': {
+                background: 'lightgrey', // Ensure background is light grey for both top and bottom rows
+              },
+            }}
+          />
+        </Box>
+      </Container>
     </Box>
   );
 }

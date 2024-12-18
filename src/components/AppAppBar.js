@@ -83,9 +83,9 @@ export default function AppAppBar() {
               <Button component={Link} to="/about" variant="text" color="info" size="large" sx={{ minWidth: 0 }}>
                 About Us
               </Button>
-              <Button component={Link} to="/contact" variant="text" color="info" size="large" sx={{ minWidth: 0 }}>
+              {/* <Button component={Link} to="/contact" variant="text" color="info" size="large" sx={{ minWidth: 0 }}>
                 Contact
-              </Button>
+              </Button> */}
             </Box>
           </Box>
           <Box

@@ -18,7 +18,7 @@ const tiers = [
     title: 'Regular',
     organism: 'Arabidopsis',
     id: 1,
-    description: ['13 Million Parameters', '20K HVGs', 'Adam Optimizer', 'CosineAnnealingWarmRestarts'],
+    description: ['Inference', 'Annotate and Plot', 'Control vs Treatment', 'Compare Cell Types'],
     buttonText: 'Select',
     buttonVariant: 'contained',
     buttonColor: 'primary',
@@ -28,7 +28,7 @@ const tiers = [
     subheader: 'Our best model',
     organism: 'Zmays',
     id: 2,
-    description: ['13 Million Parameters', '20K HVGs', 'Adam Optimizer', 'CosineAnnealingWarmRestarts'],
+    description: ['Inference', 'Annotate and Plot', 'Control vs Treatment', 'Compare Cell Types'],
     buttonText: 'Select',
     buttonVariant: 'contained',
     buttonColor: 'primary',
@@ -37,7 +37,7 @@ const tiers = [
     title: 'Regular',
     organism: 'Osativa',
     id: 3,
-    description: ['13 Million Parameters', '20K HVGs', 'Adam Optimizer', 'CosineAnnealingWarmRestarts'],
+    description: ['Inference', 'Annotate and Plot', 'Control vs Treatment', 'Compare Cell Types'],
     buttonText: 'Select',
     buttonVariant: 'contained',
     buttonColor: 'primary',
@@ -46,21 +46,15 @@ const tiers = [
     title: 'Regular',
     organism: 'GlycineMax',
     id: 4,
-    description: ['13 Million Parameters', '20K HVGs', 'Adam Optimizer', 'CosineAnnealingWarmRestarts'],
+    description: ['Inference', 'Annotate and Plot', 'Control vs Treatment', 'Compare Cell Types'],
     buttonText: 'Select',
     buttonVariant: 'contained',
     buttonColor: 'primary',
   },
 ];
 
-export default function Models({ onModelSelect }) {
-  const [selectedOrganism, setSelectedOrganism] = useState(null);
-  const handleButtonClick = (organism) => {
-    setSelectedOrganism(organism); // Update selected model
-    if (onModelSelect) {
-      onModelSelect(organism); // Pass the selected model to the parent
-    }
-  };
+export default function ModelsHome() {
+ 
   return (
     <Container
       id="pricing"
@@ -139,15 +133,15 @@ export default function Models({ onModelSelect }) {
                       : { color: null },
                   ]}
                 >
-                  <Typography component="h3" variant="h2" sx={{fontSize: "1.5rem"}}>
+                  <Typography component="h3" variant="h2" sx={{fontSize: "2rem"}}>
                     {tier.organism}
                   </Typography>
                   <Typography component="h3" variant="h6">
                     &nbsp; 
                   </Typography>
                 </Box>
-                {/* <Divider sx={{ my: 2, opacity: 0.8, borderColor: 'divider' }} /> */}
-                {/* {tier.description.map((line) => (
+                <Divider sx={{ my: 2, opacity: 0.8, borderColor: 'divider' }} />
+                {tier.description.map((line) => (
                   <Box
                     key={line}
                     sx={{ py: 1, display: 'flex', gap: 1.5, alignItems: 'center' }}
@@ -174,20 +168,9 @@ export default function Models({ onModelSelect }) {
                       {line}
                     </Typography>
                   </Box>
-                ))} */}
+                ))}
               </CardContent>
-              <CardActions>
-              <Button
-                  fullWidth
-                  variant={tier.buttonVariant}
-                  color={selectedOrganism === tier.id ? 'secondary' : tier.buttonColor}
-                  onClick={() => handleButtonClick(tier.id)}
-                >
-                  {selectedOrganism === tier.id
-                    ? 'Selected'
-                    : tier.buttonText}
-                </Button>
-              </CardActions>
+              
             </Card>
           </Grid>
         ))}

@@ -20,25 +20,25 @@ const items = [
     icon: <LooksOneIcon />,
     title: 'Step 1',
     description:
-      'Choose our Dataset/ Upload your own',
-    imageLight: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/dash-light.png")`,
-    imageDark: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/dash-dark.png")`,
+      'Choose from our Datasets/ Upload your own',
+    imageLight: `url("/datasets.png")`,
+    imageDark: `url("/datasets.png")`,
   },
   {
     icon: <LooksTwoIcon />,
     title: 'Step 2',
     description:
-      'Choose a model',
-    imageLight: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/mobile-light.png")`,
-    imageDark: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/mobile-dark.png")`,
+      'Choose a model and create Job for prediction',
+    imageLight: `url("/models.png")`,
+    imageDark: `url("/models.png")`,
   },
   {
     icon: <Looks3Icon />,
     title: 'Step 3',
     description:
-      'View results',
-    imageLight: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/devices-light.png")`,
-    imageDark: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/devices-dark.png")`,
+      'View the results by dowloading files',
+    imageLight: `url("/results.jpeg")`,
+    imageDark: `url("/results.jpeg")`,
   },
 ];
 
@@ -92,6 +92,7 @@ function MobileLayout({ selectedItemIndex, handleItemClick, selectedFeature }) {
             mb: 2,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
             minHeight: 280,
             backgroundImage: 'var(--items-imageLight)',
             ...theme.applyStyles('dark', {
@@ -161,7 +162,7 @@ export default function Process() {
           variant="body1"
           sx={{ color: 'text.secondary', mb: { xs: 2, sm: 4 } }}
         >
-          Provide a brief overview of the key features.
+          See below to understand the process of scPlantAnnotate.
         </Typography>
       </Box>
       <Box
@@ -252,6 +253,8 @@ export default function Process() {
                 width: 420,
                 height: 500,
                 backgroundSize: 'contain',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
                 backgroundImage: 'var(--items-imageLight)',
                 ...theme.applyStyles('dark', {
                   backgroundImage: 'var(--items-imageDark)',

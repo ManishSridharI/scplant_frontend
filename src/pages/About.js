@@ -12,6 +12,7 @@ import { useTheme } from '@mui/system';
 const userTestimonials = [
   {
     avatar: <Avatar alt="Chunyang Lu" src="/static/images/avatar/1.jpg" />,
+    email: "clcdp@missouri.edu",
     name: 'Chunyang Lu',
     occupation: 'PhD Student',
     testimonial:
@@ -20,6 +21,7 @@ const userTestimonials = [
   {
     avatar: <Avatar alt="Manish Sridhar Immadi" src="/Manish.jpg" />,
     name: 'Manish Sridhar Immadi',
+    email: "mizy9@missouri.edu",
     occupation: 'Masters Student',
     testimonial:
       "Department of Electrical Engineering and Computer Science",
@@ -27,6 +29,7 @@ const userTestimonials = [
   {
     avatar: <Avatar alt="Yen On Chan" src="/Yen.jpg" />,
     name: 'Yen On Chan',
+    email: "chanye@missouri.edu",
     occupation: 'PhD Student',
     testimonial:
       "MU Institute for Data Science and Informatics",
@@ -36,6 +39,7 @@ const userTestimonials = [
   {
     avatar: <Avatar alt="Trupti Joshi" src="/Trupti.jpg" />,
     name: 'Trupti Joshi',
+    email: "joshitr@health.missouri.edu",
     occupation: 'Assistant Professor',
     testimonial:
       "Core Faculty MUIDSI, DPST, LSC, IPG, EECS",
@@ -124,7 +128,18 @@ export default function About() {
               >
                 <CardHeader
                   avatar={testimonial.avatar}
-                  title={testimonial.name}
+                  title={
+                    <Typography
+                      component="a"
+                      href={`mailto:${testimonial.email}`}
+                      sx={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                      }}
+                    >
+                      {testimonial.name}
+                    </Typography>
+                  }
                   subheader={testimonial.occupation}
                 />
                 <img

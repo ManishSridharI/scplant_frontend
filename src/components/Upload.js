@@ -9,10 +9,11 @@ import { Grid2 } from '@mui/material';
 import { useAuth } from '../Auth';
 
 export default function Upload() {
-  const { user } = useAuth(); 
+  const { user, csrfToken } = useAuth(); 
   const [file, setFile] = useState(null);
   const [driveLink, setDriveLink] = useState('');
   const [datasetName, setDatasetName] = useState('');
+  const [DescriptionFlag, setDescriptionFlag] = useState('');
   const [description, setDescription] = useState('');
   const [errorMessage, setErrorMessage] = useState(''); 
 
@@ -21,6 +22,19 @@ export default function Upload() {
   };
 
   const handleDescriptionChange = (event) => {
+    const input = event.target.value.toLowerCase().trim();
+  
+    // Determine if input is 'yes' or 'no', and set flag accordingly
+    const descriptionFlag = input === 'yes' ? 1 : input === 'no' ? 0 : null;
+  
+    // If input is valid (yes or no), set description flag
+    if (descriptionFlag !== null) {
+      setDescriptionFlag(descriptionFlag);  // Store the flag (1 for 'yes' and 0 for 'no')
+    } else {
+      console.error('Invalid input. Please enter "yes" or "no".');
+    }
+    
+    // Update the description text
     setDescription(event.target.value);
   };
 
@@ -47,17 +61,23 @@ export default function Upload() {
     }
     setDriveLink(value);
   };
-
+  
   const handleUpload = () => {
     if (file && user) {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('dataset_file', file);
       formData.append('dataset_name', datasetName);
-      formData.append('description', description);
-      formData.append('user_id', user.id);
+      formData.append('dataset_public_flag', DescriptionFlag);
+      //formData.append('user_id', user.id);
       console.log('FormData after append:', Array.from(formData.entries())); 
-      fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/upload/', { // Ensure the URL matches your backend's endpoint
+      fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_upload/', { // Ensure the URL matches your backend's endpoint
         method: 'POST',
+        headers: {
+          
+          'X-CSRFToken': csrfToken,  // Set CSRF token in the header
+         
+        },
+        credentials: 'include', 
         body: formData,
         
       })
@@ -66,7 +86,7 @@ export default function Upload() {
           if (data.error) {
             setErrorMessage(data.error);
           } else {
-            console.log('File uploaded successfully:', data.path);
+            console.log('File uploaded successfully:');
           }
         })
         .catch((error) => {
@@ -127,11 +147,12 @@ export default function Upload() {
         </Grid2>
         <Grid2 item xs={12} sm={6}>
           <TextField
-            label="Description (Optional)"
+            label="Public (Yes/No)"
             variant="outlined"
             fullWidth
             value={description}
             onChange={handleDescriptionChange}
+            required
           />
         </Grid2>
       </Grid2>

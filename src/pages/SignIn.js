@@ -16,6 +16,7 @@ import ForgotPassword from './ForgotPassword';
 import ScPlantIcon from '../components/scPlantIcon';
 import AppTheme from '../AppTheme';
 import ColorModeSelect from '../ColorModeSelect';
+import { apiRequest } from '../api_util';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -25,6 +26,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   padding: theme.spacing(4),
   gap: theme.spacing(2),
   margin: 'auto',
+  marginTop: theme.spacing(15),
   [theme.breakpoints.up('sm')]: {
     maxWidth: '450px',
   },
@@ -37,9 +39,9 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
-  height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
+  //height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
   minHeight: '100%',
-  padding: theme.spacing(2),
+  padding: theme.spacing(4),
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(4),
   },
@@ -66,7 +68,8 @@ export default function SignIn(props) {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
-
+  const [failAlert, setFailAlert] = React.useState(false);
+  const [failMessage, setFailMessage] = React.useState("Wrong Username or Password");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -92,29 +95,45 @@ export default function SignIn(props) {
     const password = data.get('password');
   
     try {
-      const response = await fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/login/', { // Update with your actual login endpoint
+      const response = await apiRequest('http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/login/', { // Update with your actual login endpoint
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        // headers: {
+        //   'Content-Type': 'application/json',
+        // },
         body: JSON.stringify({ username, password }),
+       credentials: 'include',
       });
   
-      const result = await response.json();
+    //   if (!response.detail === '') {
+    //     event.target.reset();
+    //     setFailMessage(response.detail)
+    //     setFailAlert(true);
+    //     return;
+    // }
+    //   console.log(response);
+    // const result = await response.json();
+    if (response.isLogin) {
+      // If the login was successful (e.g., empty detail or based on your API's logic)
+      localStorage.setItem('user', JSON.stringify(response.User)); // Save user info in localStorage
+      localStorage.setItem('authToken', response.access);
+      // Optionally, redirect user to a different page after login
+      window.location.href = '/'; // Or set up redirection as per your requirement
+    } else {
+      // Handle failed login attempt
+      event.target.reset(); // Reset the form
+      setFailMessage(result.detail); // Display error message
+      setFailAlert(true); // Show error alert
+    }
+     // const result = await response.json();
   
-      if (result.isLogin) {
-        // Store user info in local storage
-        localStorage.setItem('user', JSON.stringify(result.User));
-        // Optionally store token if your API uses token-based auth
-        // localStorage.setItem('token', result.token);
-        
-        // Redirect or update state to indicate user is logged in
-        // e.g., navigate to a dashboard or home page
-        window.location.href = '/'; // Update with your desired route
-      } else {
-        // Handle login failure (e.g., show an error message)
-        console.error('Login failed:', result);
-      }
+      // if (result.isLogin) {
+      //   // Store user info in local storage
+      //   localStorage.setItem('user', JSON.stringify(result.User));
+      //   window.location.href = '/'; // Update with your desired route
+      // } else {
+      //   // Handle login failure (e.g., show an error message)
+      //   console.error('Login failed:', result);
+      // }
     } catch (error) {
       console.error('Error during login:', error);
     }

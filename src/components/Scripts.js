@@ -16,9 +16,8 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 const tiers = [
   {
     title: 'Regular',
-    organism: 'Arabidopsis',
+    script: 'Inference',
     id: 1,
-    description: ['13 Million Parameters', '20K HVGs', 'Adam Optimizer', 'CosineAnnealingWarmRestarts'],
     buttonText: 'Select',
     buttonVariant: 'contained',
     buttonColor: 'primary',
@@ -26,46 +25,43 @@ const tiers = [
   {
     title: 'Regular',
     subheader: 'Our best model',
-    organism: 'Zmays',
+    script: 'Annotate and Plot',
     id: 2,
-    description: ['13 Million Parameters', '20K HVGs', 'Adam Optimizer', 'CosineAnnealingWarmRestarts'],
     buttonText: 'Select',
     buttonVariant: 'contained',
     buttonColor: 'primary',
   },
   {
     title: 'Regular',
-    organism: 'Osativa',
+    script: 'Control vs Treatment',
     id: 3,
-    description: ['13 Million Parameters', '20K HVGs', 'Adam Optimizer', 'CosineAnnealingWarmRestarts'],
     buttonText: 'Select',
     buttonVariant: 'contained',
     buttonColor: 'primary',
   },
   {
     title: 'Regular',
-    organism: 'GlycineMax',
+    script: 'Compare Celltype Distribution',
     id: 4,
-    description: ['13 Million Parameters', '20K HVGs', 'Adam Optimizer', 'CosineAnnealingWarmRestarts'],
     buttonText: 'Select',
     buttonVariant: 'contained',
     buttonColor: 'primary',
   },
 ];
 
-export default function Models({ onModelSelect }) {
-  const [selectedOrganism, setSelectedOrganism] = useState(null);
-  const handleButtonClick = (organism) => {
-    setSelectedOrganism(organism); // Update selected model
-    if (onModelSelect) {
-      onModelSelect(organism); // Pass the selected model to the parent
+export default function Scripts({ onScriptSelect }) {
+  const [selectedScript, setselectedScript] = useState(null);
+  const handleButtonClick = (script) => {
+    setselectedScript(script); // Update selected model
+    if (onScriptSelect) {
+      onScriptSelect(script); // Pass the selected model to the parent
     }
   };
   return (
     <Container
       id="pricing"
       sx={{
-        pt: { xs: 8, sm: 16 },
+        pt: { xs: 1, sm: 1 },
         pb: { xs: 6, sm: 8 },
         position: 'relative',
         display: 'flex',
@@ -80,17 +76,9 @@ export default function Models({ onModelSelect }) {
           textAlign: { sm: 'left', md: 'center' },
         }}
       >
-        <Typography
-          component="h2"
-          variant="h4"
-          gutterBottom
-          sx={{ color: 'text.primary' }}
-        >
-          Models
-        </Typography>
         <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-          Choose among our models. <br />
-          They are built with precision and accuracy.
+          Choose among our scripts. <br />
+          
         </Typography>
       </Box>
       <Grid
@@ -101,7 +89,7 @@ export default function Models({ onModelSelect }) {
         {tiers.map((tier) => (
           <Grid
             size={{ xs: 12, sm: tier.title === 'Regular' ? 12 : 6, md: 3 }}
-            key={tier.organism}
+            key={tier.script}
           >
             <Card
               sx={{
@@ -139,8 +127,8 @@ export default function Models({ onModelSelect }) {
                       : { color: null },
                   ]}
                 >
-                  <Typography component="h3" variant="h2" sx={{fontSize: "1.5rem"}}>
-                    {tier.organism}
+                  <Typography component="h3" variant="h2" sx={{fontSize: "1rem"}}>
+                    {tier.script}
                   </Typography>
                   <Typography component="h3" variant="h6">
                     &nbsp; 
@@ -180,10 +168,10 @@ export default function Models({ onModelSelect }) {
               <Button
                   fullWidth
                   variant={tier.buttonVariant}
-                  color={selectedOrganism === tier.id ? 'secondary' : tier.buttonColor}
+                  color={selectedScript === tier.id ? 'secondary' : tier.buttonColor}
                   onClick={() => handleButtonClick(tier.id)}
                 >
-                  {selectedOrganism === tier.id
+                  {selectedScript === tier.id
                     ? 'Selected'
                     : tier.buttonText}
                 </Button>
