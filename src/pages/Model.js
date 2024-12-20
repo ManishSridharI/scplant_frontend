@@ -116,14 +116,11 @@ export default function Model(props) {
         };
         break;
       case 3:
-        url = 'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_control/';
+        url = 'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_treatment_vs_control/';
         requestData = {
-          job_dataset: commonData.job_dataset,
-          job_predictor: commonData.job_predictor,
+          job_control_dataset: commonData.job_dataset,
           job_name: commonData.job_name,
           job_script: 3,
-          job_control_gene_number: commonData.gene_number,
-          job_control_log_filename: "Log001",
           job_control_stdout_filename: "Stdout001",
           job_control_stderr_filename: "Stderr001",
         };

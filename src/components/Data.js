@@ -21,6 +21,26 @@ const items = [
   },
   {
     icon: <InsightsIcon />,
+    title: 'Arabidopsis (SRP 235)',
+    dataset_info_id: 5,
+    description: 'SRP 235',
+    genes: '53,678',
+    cells: '1.2M',
+    datasets: '28',
+    cell_types: '50',
+  },
+  {
+    icon: <InsightsIcon />,
+    title: 'Arabidopsis (SRP 330)',
+    dataset_info_id: 6,
+    description: 'SRP 330',
+    genes: '53,678',
+    cells: '1.2M',
+    datasets: '28',
+    cell_types: '50',
+  },
+  {
+    icon: <InsightsIcon />,
     title: 'Zmays (SRP 335)',
     dataset_info_id: 1,
     description: 'SRP 335',
@@ -95,7 +115,7 @@ export default function Data({ onDatasetClick }) {
         </Box>
         <Grid container spacing={2}>
           {items.map((item, index) => (
-            <Grid size={{ xs: 12, sm: 3, md: 3 }} key={index}>
+            <Grid size={{ xs: 12, sm: 4, md: 4 }} key={index}>
               <ButtonBase
               component="div"
               sx={{

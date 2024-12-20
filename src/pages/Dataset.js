@@ -80,7 +80,7 @@ export default function Dataset(props) {
         onClick={handleDatasetSubmit}
         variant="contained"
       >
-        Submit Dataset
+        Proceed to Choose Model
       </Button>
     </Box>
     </div>

@@ -97,12 +97,16 @@ export default function PrivateData({ onDatasetSelect }) {
             checkboxSelection
             rowSelectionModel={rowSelectionModel}
             onRowSelectionModelChange={(newRowSelectionModel) => {
-              setRowSelectionModel(newRowSelectionModel);
-              const selectedDatasetIds = newRowSelectionModel.map((id) => id);
-              onDatasetSelect(selectedDatasetIds);
+              const singleSelection = newRowSelectionModel.slice(-1); // Keep only the last selected row
+              setRowSelectionModel(singleSelection);
+              onDatasetSelect(singleSelection);
+              // setRowSelectionModel(newRowSelectionModel);
+              // const selectedDatasetIds = newRowSelectionModel.map((id) => id);
+              // onDatasetSelect(selectedDatasetIds);
             }}
             rowsPerPageOptions={[5, 10, 20]}
             autoHeight
+            disableMultipleSelection
             sx={{
               '& .MuiDataGrid-container--top [role="row"], & .MuiDataGrid-container--bottom [role="row"]': {
                 background: 'lightgrey', // Ensure background is light grey for both top and bottom rows

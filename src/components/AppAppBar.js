@@ -77,6 +77,9 @@ export default function AppAppBar() {
               <Button component={Link} to="/results" variant="text" color="info" size="large">
                 Results
               </Button>
+              <Button component={Link} to="/compare" variant="text" color="info" size="large">
+                Compare
+              </Button>
               <Button variant="text" target="_blank" href="https://github.com/ManishSridharI/scplant_backend" color="info" size="large">
                 GitHub
               </Button>

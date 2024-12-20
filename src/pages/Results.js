@@ -6,14 +6,15 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { DataGrid } from '@mui/x-data-grid';
 import CircularProgress from '@mui/material/CircularProgress';
-//import JSZip from "jszip";
-//import { saveAs } from "file-saver";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 export default function Results(props) {
   const { user, csrfToken } = useAuth();
   const [rows, setRows] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
-
+  const [page, setPage] = React.useState(0);
+  const [pageSize, setPageSize] = React.useState(5);
   
   
     const fetchData = async () => {
@@ -21,8 +22,8 @@ export default function Results(props) {
         const urls = [
           'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_query/',
           'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_annotate_and_plot_query/',
-          // 'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_control_vs_condition/',
-          // 'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_compare_plot/',
+          'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_treatment_vs_control_query/',
+          'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_compare_cell_type_dist_query/',
         ];
         // const response = await fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_query/', {
         //   method: 'GET',
@@ -77,27 +78,29 @@ export default function Results(props) {
           filesId: job.job_annotate_and_plot_file_output,
         })) || [];
 
-        // const controlVsConditionData = data[2]?.ControlVsCondition?.map((control) => ({
-        //   id: job.id,
-        //   testName: job.job_name,
-        //   status: job.job_celery_task_status,
-        //   creationTime: new Date(job.job_creation_timestamp).toLocaleString(),
-        //   filesId: job.job_inference_file_output_id,
-        // })) || [];
+        const controlVsConditionData = data[2]?.JobTreatmentVsControl?.map((job, index) => ({
+          type: `Treatment vs Control`, 
+          id: `Treatment vs Control-${job.id}`,
+          testName: job.job_name,
+          status: job.job_celery_task_status,
+          creationTime: new Date(job.job_creation_timestamp).toLocaleString(),
+          filesId: job.job_inference_file_output_id,
+        })) || [];
 
-        // const comparePlotData = data[3]?.ComparePlot?.map((plot) => ({
-        //   id: job.id,
-        //   testName: job.job_name,
-        //   status: job.job_celery_task_status,
-        //   creationTime: new Date(job.job_creation_timestamp).toLocaleString(),
-        //   filesId: job.job_inference_file_output_id,
-        // })) || [];
+        const comparePlotData = data[3]?.JobCompareCellTypeDist?.map((job,index) => ({
+          type: `Compare Cell Type Distribution`, 
+          id: `Compare Cell Type Distribution-${job.id}`,
+          testName: job.job_name,
+          status: job.job_celery_task_status,
+          creationTime: new Date(job.job_creation_timestamp).toLocaleString(),
+          filesId: job.job_inference_file_output_id,
+        })) || [];
 
         const combinedData = [
           ...jobInferenceData,
           ...annotateandplotData,
-          // ...controlVsConditionData,
-          // ...comparePlotData,
+          ...controlVsConditionData,
+          ...comparePlotData,
         ];      
         
         // const data = await response.json();
@@ -126,17 +129,18 @@ export default function Results(props) {
   }, []);
 
 console.log(rows);
-  const fetchDownloadFiles = async (fileOutputId) => {
+  const fetchDownloadFiles = async (row) => {
+    const fileOutputId = row.filesId;
     try {
       const response = await fetch(`http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_file_output_query_by_id/`, {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken,
           
         },
         credentials: "include",
-       // body: JSON.stringify({ job_inference_file_output_id: fileOutputId }),
+       body: JSON.stringify({ job_inference_file_output_id: fileOutputId }),
       });
   
       if (!response.ok) {
@@ -144,14 +148,11 @@ console.log(rows);
       }
   
       const data = await response.json();
-      const { job_inference_log_file, job_inference_prediction_file, job_inference_stdout_file, job_inference_stderr_file } = data;
-  
+ 
       // URLs to fetch the files (assume they are hosted on the server)
-      const fileUrls = {
-        log: `http://digbio-g2pdeep.rnet.missouri.edu/files/${job_inference_log_file}`,
-        prediction: `http://digbio-g2pdeep.rnet.missouri.edu/files/${job_inference_prediction_file}`,
-        stdout: `http://digbio-g2pdeep.rnet.missouri.edu/files/${job_inference_stdout_file}`,
-        stderr: `http://digbio-g2pdeep.rnet.missouri.edu/files/${job_inference_stderr_file}`,
+      const fileUrls = {  
+        prediction: `http://digbio-g2pdeep.rnet.missouri.edu:8849/home/scplant_backend/core/uploads${data.JobInferenceFileOutput.job_inference_prediction_file}`,
+        stderr: `http://digbio-g2pdeep.rnet.missouri.edu:8849/home/scplant_backend/core/uploads${data.JobInferenceFileOutput.job_inference_stderr_file}`,
       };
   
       // Combine files into a ZIP
@@ -163,12 +164,12 @@ console.log(rows);
           continue;
         }
         const fileBlob = await fileResponse.blob();
-        zip.file(`${key}.txt`, fileBlob);
+        zip.file( fileBlob);
       }
   
       // Generate ZIP blob
       const zipBlob = await zip.generateAsync({ type: "blob" });
-      saveAs(zipBlob, `job_${fileOutputId}_output_files.zip`);
+      saveAs(zipBlob, `job_${row.testName}_output_files.zip`);
     } catch (error) {
       console.error("Error fetching or downloading files:", error);
       alert("Failed to download files.");
@@ -203,7 +204,7 @@ console.log(rows);
       flex: 1,
       renderCell: (params) => (
         <Button
-        onClick={() => fetchDownloadFiles(params.row.files_id)}
+        onClick={() => fetchDownloadFiles(params.row)}
         variant="contained"
       >
         Download ZIP
@@ -257,12 +258,12 @@ console.log(rows);
       ) : (
         <DataGrid
           rows={rows}
-          columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
+          columns={columns} 
+        loading={loading} // Show loading spinner during data fetch
           disableSelectionOnClick
-          autoHeight
+          // autoHeight
           sx={{
+            height: 600,
             '& .MuiDataGrid-container--top [role="row"], & .MuiDataGrid-container--bottom [role="row"]': {
               background: 'lightgrey', // Ensure background is light grey for both top and bottom rows
             },

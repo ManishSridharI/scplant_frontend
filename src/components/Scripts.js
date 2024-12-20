@@ -31,22 +31,22 @@ const tiers = [
     buttonVariant: 'contained',
     buttonColor: 'primary',
   },
-  {
-    title: 'Regular',
-    script: 'Control vs Treatment',
-    id: 3,
-    buttonText: 'Select',
-    buttonVariant: 'contained',
-    buttonColor: 'primary',
-  },
-  {
-    title: 'Regular',
-    script: 'Compare Celltype Distribution',
-    id: 4,
-    buttonText: 'Select',
-    buttonVariant: 'contained',
-    buttonColor: 'primary',
-  },
+  // {
+  //   title: 'Regular',
+  //   script: 'Control vs Treatment',
+  //   id: 3,
+  //   buttonText: 'Select',
+  //   buttonVariant: 'contained',
+  //   buttonColor: 'primary',
+  // },
+  // {
+  //   title: 'Regular',
+  //   script: 'Compare Celltype Distribution',
+  //   id: 4,
+  //   buttonText: 'Select',
+  //   buttonVariant: 'contained',
+  //   buttonColor: 'primary',
+  // },
 ];
 
 export default function Scripts({ onScriptSelect }) {
