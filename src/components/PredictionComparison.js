@@ -26,7 +26,7 @@ export default function PredictionComparison() {
 
   React.useEffect(() => {
     if (user && csrfToken) {
-      fetch(`http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_annotate_and_plot_query/`, {
+      fetch(`/api/jobs/api/job_annotate_and_plot_query/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -76,6 +76,10 @@ export default function PredictionComparison() {
   };
 
   const handleSubmit = async () => {
+    if (!user) {
+      alert('Please login first to proceed.');
+      navigate('/signin');
+    }
     // Check if control and condition 1 predictions are selected
     if (!controlPrediction || !condition1Prediction || !jobName) {
       alert('Please enter Job name and select both Control and Condition 1 predictions.');
@@ -100,7 +104,7 @@ export default function PredictionComparison() {
     // Send the request to the API
     try {
         // Send the request to the API
-        const response = await fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_compare_cell_type_dist/', {
+        const response = await fetch('/api/jobs/api/job_compare_cell_type_dist/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

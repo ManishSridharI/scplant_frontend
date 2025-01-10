@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
-
+COPY scplant.conf /etc/httpd/conf.d/scplant.conf
 # Install app dependencies
 RUN npm install
 

@@ -15,7 +15,7 @@ export default function PrivateData({ onDatasetSelect }) {
   useEffect(() => {
     if (user && csrfToken) {
       // Sending user.id as a query parameter
-      fetch(`http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_query/`, {
+      fetch(`/api/datasets/api/dataset_query/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

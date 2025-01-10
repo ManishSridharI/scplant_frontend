@@ -7,9 +7,11 @@ import Container from '@mui/material/Container';
 import { useState } from 'react';
 import { Grid2 } from '@mui/material';
 import { useAuth } from '../Auth';
+import { useNavigate } from 'react-router-dom';
 
 export default function Upload() {
   const { user, csrfToken } = useAuth(); 
+  const navigate = useNavigate(); 
   const [file, setFile] = useState(null);
   const [driveLink, setDriveLink] = useState('');
   const [datasetName, setDatasetName] = useState('');
@@ -63,6 +65,11 @@ export default function Upload() {
   };
   
   const handleUpload = () => {
+    if (!user) {
+      alert('Please log in to upload files.');
+      navigate('/signin'); // Redirect to sign-in page
+      return;
+    }
     if (file && user) {
       const formData = new FormData();
       formData.append('dataset_file', file);
@@ -70,7 +77,7 @@ export default function Upload() {
       formData.append('dataset_public_flag', DescriptionFlag);
       //formData.append('user_id', user.id);
       console.log('FormData after append:', Array.from(formData.entries())); 
-      fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_upload/', { // Ensure the URL matches your backend's endpoint
+      fetch('/api/datasets/api/dataset_upload/', { // Ensure the URL matches your backend's endpoint
         method: 'POST',
         headers: {
           

@@ -89,43 +89,45 @@ export default function SignIn(props) {
       event.preventDefault();
       return;
     }
-  
+
     const data = new FormData(event.currentTarget);
     const username = data.get('username');
     const password = data.get('password');
-  
+
     try {
-      const response = await apiRequest('http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/login/', { // Update with your actual login endpoint
+      // const response = await fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/login/', { // Update with your actual login endpoint
+      const response = await fetch('/api/accounts/api/login/', { // Update with your actual login endpoint
         method: 'POST',
-        // headers: {
-        //   'Content-Type': 'application/json',
-        // },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ username, password }),
-       credentials: 'include',
+        credentials: 'include',
       });
-  
-    //   if (!response.detail === '') {
-    //     event.target.reset();
-    //     setFailMessage(response.detail)
-    //     setFailAlert(true);
-    //     return;
-    // }
-    //   console.log(response);
-    // const result = await response.json();
-    if (response.isLogin) {
-      // If the login was successful (e.g., empty detail or based on your API's logic)
-      localStorage.setItem('user', JSON.stringify(response.User)); // Save user info in localStorage
-      localStorage.setItem('authToken', response.access);
-      // Optionally, redirect user to a different page after login
-      window.location.href = '/'; // Or set up redirection as per your requirement
-    } else {
-      // Handle failed login attempt
-      event.target.reset(); // Reset the form
-      setFailMessage(result.detail); // Display error message
-      setFailAlert(true); // Show error alert
-    }
-     // const result = await response.json();
-  
+
+      //   if (!response.detail === '') {
+      //     event.target.reset();
+      //     setFailMessage(response.detail)
+      //     setFailAlert(true);
+      //     return;
+      // }
+
+      const result = await response.json();
+
+      if (result.isLogin) {
+        // If the login was successful (e.g., empty detail or based on your API's logic)
+        localStorage.setItem('user', JSON.stringify(result.User)); // Save user info in localStorage
+        localStorage.setItem('authToken', result.access);
+        // Optionally, redirect user to a different page after login
+        window.location.href = '/'; // Or set up redirection as per your requirement
+      } else {
+        // Handle failed login attempt
+        event.target.reset(); // Reset the form
+        setFailMessage(result.detail); // Display error message
+        setFailAlert(true); // Show error alert
+      }
+      // const result = await response.json();
+
       // if (result.isLogin) {
       //   // Store user info in local storage
       //   localStorage.setItem('user', JSON.stringify(result.User));
@@ -146,9 +148,9 @@ export default function SignIn(props) {
     let isValid = true;
 
 
-      setusernameError(false);
-      setusernameErrorMessage('');
-    
+    setusernameError(false);
+    setusernameErrorMessage('');
+
 
     if (!password.value || password.value.length < 6) {
       setPasswordError(true);
@@ -233,11 +235,11 @@ export default function SignIn(props) {
                 color={passwordError ? 'error' : 'primary'}
               />
               <FormControlLabel
-          control={<Checkbox checked={showPassword} onChange={handleTogglePassword} />}
-          label="Show Password"
-        />
+                control={<Checkbox checked={showPassword} onChange={handleTogglePassword} />}
+                label="Show Password"
+              />
             </FormControl>
-            
+
             <ForgotPassword open={open} handleClose={handleClose} />
             <Button
               type="submit"
@@ -259,7 +261,7 @@ export default function SignIn(props) {
                 </Link>
               </span>
             </Typography>
-          </Box>         
+          </Box>
         </Card>
       </SignInContainer>
     </AppTheme>

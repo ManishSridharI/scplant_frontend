@@ -26,7 +26,7 @@ export default function DatasetComparison() {
 
   React.useEffect(() => {
     if (user && csrfToken) {
-      fetch(`http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_query_public/`, {
+      fetch(`/api/datasets/api/dataset_query_public/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -78,6 +78,10 @@ export default function DatasetComparison() {
   };
 
   const handleSubmit = async () => {
+    if (!user) {
+      alert('Please login first to proceed.');
+      navigate('/signin');
+    }
     // Check if control and condition 1 datasets are selected
     if (!controlDataset || !condition1Dataset || !jobName) {
       alert('Please enter Job name and select both Control and Condition 1 datasets.');
@@ -102,7 +106,7 @@ export default function DatasetComparison() {
     // Send the request to the API
     try {
         // Send the request to the API
-        const response = await fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_treatment_vs_control/', {
+        const response = await fetch('/api/jobs/api/job_treatment_vs_control/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

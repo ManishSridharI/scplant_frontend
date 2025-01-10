@@ -89,7 +89,7 @@ export default function Model(props) {
       let requestData = {};
     switch (parseInt(selectedScript, 10)) {
       case 1:
-        url = 'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference/';
+        url = '/api/jobs/api/job_inference/';
         requestData = {
           job_dataset: commonData.job_dataset,
           job_predictor: commonData.job_predictor,
@@ -103,7 +103,7 @@ export default function Model(props) {
         };
         break;
       case 2:
-        url = 'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_annotate_and_plot/';
+        url = '/api/jobs/api/job_annotate_and_plot/';
         requestData = {
           job_dataset: commonData.job_dataset,
           job_predictor: commonData.job_predictor,
@@ -116,7 +116,7 @@ export default function Model(props) {
         };
         break;
       case 3:
-        url = 'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_treatment_vs_control/';
+        url = '/api/jobs/api/job_treatment_vs_control/';
         requestData = {
           job_control_dataset: commonData.job_dataset,
           job_name: commonData.job_name,
@@ -126,7 +126,7 @@ export default function Model(props) {
         };
         break;
       case 4:
-        url = 'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_compare/';
+        url = '/api/jobs/api/job_compare/';
         requestData = {
           job_dataset: commonData.job_dataset,
           job_predictor: commonData.job_predictor,

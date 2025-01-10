@@ -4,18 +4,26 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: scplant_frontend_web
-    container_name: "scplant_frontend_web"
-    command: sh -c "export PORT=3355 && npm start"
+    image: scplant-frontend-web
+    container_name: "scplant-frontend-web"
+    command: sh -c "export PORT=80 && npm start"
     tty: true
     restart: always
     volumes:
       - .:/usr/src/app
       - '/usr/src/app/node_modules'
       # - ./node_modules:/usr/src/app/node_modules
-    expose: 
-      - 5049
+    # expose: 
+    #   - 5049
     ports:
-      - '5049:3355'
+      - '127.0.0.1:5049:80'
+     # - '5049:3355'
     networks:
       - default
+      - scplant-network
+
+
+networks:
+  scplant-network:
+    external: true
+

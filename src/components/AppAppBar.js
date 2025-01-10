@@ -30,7 +30,8 @@ export default function AppAppBar() {
   const { user, logout: authLogout } = useAuth(); 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/logout', {
+      // const response = await fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/logout', {
+      const response = await fetch('/api/accounts/api/logout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

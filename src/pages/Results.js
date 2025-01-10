@@ -8,6 +8,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import CircularProgress from '@mui/material/CircularProgress';
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import { useNavigate } from 'react-router-dom';
 
 export default function Results(props) {
   const { user, csrfToken } = useAuth();
@@ -15,15 +16,19 @@ export default function Results(props) {
   const [loading, setLoading] = React.useState(true);
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(5);
-  
+  const navigate = useNavigate();
   
     const fetchData = async () => {
+      if (!user) {
+        setLoading(false);
+        return;  // Skip data fetching if user is not logged in
+      }
       try {
         const urls = [
-          'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_query/',
-          'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_annotate_and_plot_query/',
-          'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_treatment_vs_control_query/',
-          'http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_compare_cell_type_dist_query/',
+          '/api/jobs/api/job_inference_query/',
+          '/api/jobs/api/job_annotate_and_plot_query/',
+          '/api/jobs/api/job_treatment_vs_control_query/',
+          '/api/jobs/api/job_compare_cell_type_dist_query/',
         ];
         // const response = await fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_query/', {
         //   method: 'GET',
@@ -84,7 +89,7 @@ export default function Results(props) {
           testName: job.job_name,
           status: job.job_celery_task_status,
           creationTime: new Date(job.job_creation_timestamp).toLocaleString(),
-          filesId: job.job_inference_file_output_id,
+          filesId: job.job_treatment_vs_control_file_output,
         })) || [];
 
         const comparePlotData = data[3]?.JobCompareCellTypeDist?.map((job,index) => ({
@@ -93,7 +98,7 @@ export default function Results(props) {
           testName: job.job_name,
           status: job.job_celery_task_status,
           creationTime: new Date(job.job_creation_timestamp).toLocaleString(),
-          filesId: job.job_inference_file_output_id,
+          filesId: job.job_compare_cell_type_dist_file_output,
         })) || [];
 
         const combinedData = [
@@ -129,10 +134,74 @@ export default function Results(props) {
   }, []);
 
 console.log(rows);
+const handleDownload = (row) => {
+  fetchDownloadFiles(row, setLoading);
+};
   const fetchDownloadFiles = async (row) => {
-    const fileOutputId = row.filesId;
+    setLoading(true);
+    const type= row.type;
+    const filesId = row.filesId;
+    let endpoint = "";
+    let payload = {};
+    let fileKeys = {};
+    let rootKey = "";
+    switch (type) {
+      case "Inference":
+        endpoint = `/api/jobs/api/job_inference_file_output_query_by_id/`;
+        payload = { job_inference_file_output_id: filesId };
+        fileKeys = {
+          prediction: "job_inference_prediction_file",
+          stderr: "job_inference_stderr_file",
+        };
+        rootKey = "JobInferenceFileOutput";
+        break;
+      case "Annotate and Plot":
+        endpoint = `/api/jobs/api/job_annotate_and_plot_file_output_query_by_id/`;
+        payload = { job_annotate_and_plot_file_output_id: filesId };
+        fileKeys = {
+          top25: "job_annotate_and_plot_top25_markers_file",
+          marker_genes: "job_annotate_and_plot_marker_genes_file",
+          // celltype: "job_annotate_and_plot_output_with_celltype_file",
+          prediction: "job_annotate_and_plot_prediction_file",
+          annotate_tsne: "job_annotate_and_plot_annotate_tsne_file",
+          annotate_umap: "job_annotate_and_plot_annotate_umap_file",
+          top3: "job_annotate_and_plot_top3_genes_dotplot_file",
+          stderr: "job_annotate_and_plot_stderr_file",
+        };
+        rootKey = "JobAnnotateAndPlotFileOutput";
+        break;
+      case "Treatment vs Control":
+        endpoint = `/api/jobs/api/job_treatment_vs_control_file_output_query_by_id/`;
+        payload = { job_treatment_vs_control_file_output_id: filesId };
+        fileKeys = {
+          cond1_marker: "job_treatment_vs_control_condition1_marker_genes_file",
+          cond1_top25: "job_treatment_vs_control_condition1_top25_markers_file",
+          cond1_top10_dot: "job_treatment_vs_control_condition1_top10_genes_dotplot_file",
+          cond2_marker: "job_treatment_vs_control_condition2_marker_genes_file",
+          cond2_top25: "job_treatment_vs_control_condition2_top25_markers_file",
+          cond2_top10_dot: "job_treatment_vs_control_condition2_top10_genes_dotplot_file",
+          t_vs_ctrl_ctrl_vs_con: "job_treatment_vs_control_control_vs_conditions_markers_file",
+          t_vs_ctrl_con_vs_ctrl: "job_treatment_vs_control_conditions_vs_control_markers_file",
+          stderr: "job_annotate_and_plot_stderr_file",
+        };
+        rootKey = "JobTreatmentVsControlFileOutput";
+        break;
+        case "Compare Cell Type Distribution":
+          endpoint = `/api/jobs/api/job_compare_cell_type_dist_file_output_query_by_id/`;
+          payload = { job_compare_cell_type_dist_file_output_id: filesId };
+          fileKeys = {
+            compare_output: "job_compare_cell_type_dist_output_file",
+            stderr: "job_annotate_and_plot_stderr_file",
+          };
+          rootKey = "JobCompareCellTypeDistFileOutput";
+          break;
+      default:
+        alert(`Unsupported job type: ${type}`);
+        setLoading(false);
+        return;
+    }
     try {
-      const response = await fetch(`http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_file_output_query_by_id/`, {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -140,7 +209,7 @@ console.log(rows);
           
         },
         credentials: "include",
-       body: JSON.stringify({ job_inference_file_output_id: fileOutputId }),
+       body: JSON.stringify(payload),
       });
   
       if (!response.ok) {
@@ -148,23 +217,55 @@ console.log(rows);
       }
   
       const data = await response.json();
- 
+      const fileUrls = {};
+      const responseRoot = data[rootKey]; 
+      if (!responseRoot) {
+        console.error(`Invalid response structure: Missing ${rootKey}`);
+        alert("Failed to process file data.");
+        setLoading(false);
+        return;
+      }
       // URLs to fetch the files (assume they are hosted on the server)
-      const fileUrls = {  
-        prediction: `http://digbio-g2pdeep.rnet.missouri.edu:8849/home/scplant_backend/core/uploads${data.JobInferenceFileOutput.job_inference_prediction_file}`,
-        stderr: `http://digbio-g2pdeep.rnet.missouri.edu:8849/home/scplant_backend/core/uploads${data.JobInferenceFileOutput.job_inference_stderr_file}`,
-      };
-  
+      // const fileUrls = {  
+      //   prediction: `http://digbio-g2pdeep.rnet.missouri.edu:8449${data.JobInferenceFileOutput.job_inference_prediction_file}`,
+      //   stderr: `http://digbio-g2pdeep.rnet.missouri.edu:8449${data.JobInferenceFileOutput.job_inference_stderr_file}`,
+      // };
+     // console.log(fileUrls);
       // Combine files into a ZIP
-      const zip = new JSZip();
-      for (const [key, url] of Object.entries(fileUrls)) {
-        const fileResponse = await fetch(url);
-        if (!fileResponse.ok) {
-          console.warn(`Failed to fetch ${key} file`);
-          continue;
+
+      for (const [key, value] of Object.entries(fileKeys)) {
+        if (responseRoot[value]) {
+          fileUrls[key] = `/api${responseRoot[value]}`;
         }
-        const fileBlob = await fileResponse.blob();
-        zip.file( fileBlob);
+      }
+
+      const zip = new JSZip();
+      // for (const [key, url] of Object.entries(fileUrls)) {
+      //   const fileResponse = await fetch(url);
+      //   if (!fileResponse.ok) {
+      //     console.warn(`Failed to fetch ${key} file`);
+      //     continue;
+      //   }
+      //   const fileBlob = await fileResponse.blob();
+      //   const fileName = url.split('/').pop()
+      //   zip.file(fileName, fileBlob);
+      // }
+
+      for (const [key, url] of Object.entries(fileUrls)) {
+        if (!url) continue; // Skip missing files
+  
+        try {
+          const fileResponse = await fetch(url);
+          if (!fileResponse.ok) {
+            console.warn(`Failed to fetch ${key} file`);
+            continue;
+          }
+          const fileBlob = await fileResponse.blob();
+          const fileName = url.split("/").pop();
+          zip.file(fileName, fileBlob);
+        } catch (fetchError) {
+          console.error(`Error fetching ${key} file:`, fetchError);
+        }
       }
   
       // Generate ZIP blob
@@ -173,6 +274,9 @@ console.log(rows);
     } catch (error) {
       console.error("Error fetching or downloading files:", error);
       alert("Failed to download files.");
+    } finally {
+      // Hide loading after completion
+      setLoading(false);
     }
   };
   
@@ -203,15 +307,40 @@ console.log(rows);
       headerName: 'Download',
       flex: 1,
       renderCell: (params) => (
+        
         <Button
-        onClick={() => fetchDownloadFiles(params.row)}
+        onClick={() => handleDownload(params.row)}
         variant="contained"
+        disabled={loading}      
       >
-        Download ZIP
+        Results ZIP
       </Button>
       ),
     },
   ];
+
+  if (!user) {
+    // If the user is not logged in, show login prompt
+    return (
+      <Container id="pricing"
+      sx={{
+        pt: { xs: 8, sm: 16 },
+        pb: { xs: 8, sm: 16 },
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: { xs: 3, sm: 6 },
+      }}>
+        <Typography variant="h4" gutterBottom>
+          Please log in to view the results
+        </Typography>
+        <Button variant="contained" onClick={() => navigate('/signin')} >
+          Sign in
+        </Button>
+      </Container>
+    );
+  }
 
 
 

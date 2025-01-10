@@ -38,7 +38,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
 
 const SignUpContainer = styled(Stack)(({ theme }) => ({
   height: '100%',
- 
+
   padding: theme.spacing(2),
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(4),
@@ -157,7 +157,8 @@ export default function SignUp(props) {
     };
     console.log('Payload:', JSON.stringify(payload));
     try {
-      const response = await fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/registration/', {
+      // const response = await fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/registration/', {
+      const response = await fetch('/api/accounts/api/registration/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -170,7 +171,7 @@ export default function SignUp(props) {
         alert('Registration successful! Please Proceed to Sign in.');
         window.location.href = '/signin';
       } else {
-        alert('Registration failed!', error);
+        alert('Registration failed!');//, error);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -282,9 +283,9 @@ export default function SignUp(props) {
                 color={passwordError ? 'error' : 'primary'}
               />
               <FormControlLabel
-          control={<Checkbox checked={showPassword1} onChange={handleTogglePassword1} />}
-          label="Show Password"
-        />
+                control={<Checkbox checked={showPassword1} onChange={handleTogglePassword1} />}
+                label="Show Password"
+              />
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="password2"></FormLabel>
