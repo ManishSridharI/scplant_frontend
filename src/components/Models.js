@@ -143,7 +143,7 @@ export default function Models({ onModelSelect }) {
                       : { color: null },
                   ]}
                 >
-                  <Typography component="h3" variant="h2" sx={{fontSize: "1.25rem"}}>
+                  <Typography component="h3" variant="h2" sx={{fontSize: "1.25rem", fontStyle: 'italic'}}>
                     {tier.organism}
                   </Typography>
                   <Typography component="h3" variant="h6">
@@ -186,7 +186,7 @@ export default function Models({ onModelSelect }) {
                   fullWidth
                   variant={tier.buttonVariant}
                   color={selectedOrganism === tier.id ? 'secondary' : tier.buttonColor}
-                  onClick={() => handleButtonClick(tier.id)}
+                  onClick={() => handleButtonClick(tier.id)}                 
                 >
                   {selectedOrganism === tier.id
                     ? 'Selected'

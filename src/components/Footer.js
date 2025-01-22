@@ -175,6 +175,11 @@ export default function Footer() {
           useFlexGap
           sx={{ justifyContent: 'left', color: 'text.secondary' }}
         >
+          <img 
+            src="MUlogo.png" 
+            alt="Logo" 
+            style={{ width: '200px', height: '40px', alignSelf: 'center' }} 
+          />
           <IconButton
             color="inherit"
             size="small"

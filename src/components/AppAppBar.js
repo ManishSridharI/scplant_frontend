@@ -104,7 +104,7 @@ export default function AppAppBar() {
           >
             {user ? (
               <>
-              <span style={{color:'black'}}>Hello, {user.first_name}!!</span> {/* Display the user's first name */}
+              <span style={{color:'black'}}>Hello!! 👋 {user.first_name}  </span> {/* Display the user's first name */}
               <Button onClick={handleLogout} color="primary" variant="contained" size="large">
                 Log out
               </Button>

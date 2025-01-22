@@ -283,7 +283,7 @@ const handleDownload = (row) => {
   
 
   const columns = [
-    { field: 'testName', headerName: 'Test Name', flex: 1.5 },
+    { field: 'testName', headerName: 'Prediction Name', flex: 1.5 },
     {
       field: 'status',
       headerName: 'Status',
@@ -373,7 +373,7 @@ const handleDownload = (row) => {
         >
           Results
         </Typography>
-        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+        <Typography variant="h6" sx={{ color: 'text.secondary' }}>
           Find and download your results here.<br />
         </Typography>
       </Box>

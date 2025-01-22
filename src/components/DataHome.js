@@ -117,7 +117,7 @@ export default function DataHome() {
               >
                 <Box sx={{ opacity: '50%' }}>{item.icon}</Box>
                 <div>
-                  <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '18px' }}>
+                  <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '18px' , fontStyle: 'italic'}}>
                     {item.title}
                   </Typography>
                   {/* <Typography variant="body2" sx={{ color: 'grey.400' }}>

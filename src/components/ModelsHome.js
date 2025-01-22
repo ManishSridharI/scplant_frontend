@@ -133,7 +133,7 @@ export default function ModelsHome() {
                       : { color: null },
                   ]}
                 >
-                  <Typography component="h3" variant="h2" sx={{fontSize: "1.3rem"}}>
+                  <Typography component="h3" variant="h2" sx={{fontSize: "1.3rem", fontStyle: 'italic'}}>
                     {tier.organism}
                   </Typography>
                   <Typography component="h3" variant="h6">
