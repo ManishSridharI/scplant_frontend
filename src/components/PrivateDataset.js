@@ -6,13 +6,14 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
 
-export default function PrivateData({ onDatasetSelect }) {
+export default function PrivateData({ onDatasetSelect, refreshTrigger }) {
   const { user, csrfToken } = useAuth(); // Get the logged-in user's info and CSRF token
   const [datasets, setDatasets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
 
   useEffect(() => {
+    console.log("useEffect triggered. Refresh Trigger:", refreshTrigger);
     if (user && csrfToken) {
       // Sending user.id as a query parameter
       fetch(`/api/datasets/api/dataset_query/`, {
@@ -32,10 +33,12 @@ export default function PrivateData({ onDatasetSelect }) {
               id: dataset.id,
               dataset_name: dataset.dataset_name,
               dataset_file: dataset.dataset_file,
+              dataset_gene_count: dataset.dataset_gene_count,
               dataset_public_flag: dataset.dataset_public_flag ? 'Yes' : 'No', // Convert boolean to display-friendly value
               dataset_creation_timestamp: new Date(dataset.dataset_creation_timestamp).toLocaleString(), // Format timestamp
             }));
             setDatasets(formattedDatasets);  // Set the formatted datasets to state
+          //  setRefreshKey((prevKey) => prevKey + 1);
           } else {
             console.error('Error fetching datasets:', data.error);
           }
@@ -49,7 +52,7 @@ export default function PrivateData({ onDatasetSelect }) {
       console.error('User or CSRF token not found');
       setLoading(false);
     }
-  }, [user, csrfToken]);
+  }, [user, csrfToken, refreshTrigger]);
 
   if (loading) {
     return <CircularProgress />;
@@ -61,7 +64,7 @@ export default function PrivateData({ onDatasetSelect }) {
 
   const columns = [
     { field: 'dataset_name', headerName: 'Dataset Name', flex: 1 },
-    // { field: 'dataset_file', headerName: 'File Path', flex: 1 },
+    // { field: 'dataset_gene_count', headerName: 'Gene Count', flex: 0.5 },
     { field: 'dataset_public_flag', headerName: 'Public', flex: 0.5 },
     { field: 'dataset_creation_timestamp', headerName: 'Creation Date', flex: 1 },
   ];
@@ -97,9 +100,18 @@ export default function PrivateData({ onDatasetSelect }) {
             checkboxSelection
             rowSelectionModel={rowSelectionModel}
             onRowSelectionModelChange={(newRowSelectionModel) => {
-              const singleSelection = newRowSelectionModel.slice(-1); // Keep only the last selected row
-              setRowSelectionModel(singleSelection);
-              onDatasetSelect(singleSelection);
+              if (newRowSelectionModel.length > 0) {
+                const selectedId = parseInt(newRowSelectionModel[newRowSelectionModel.length - 1], 10); // Convert to int
+                const selectedDataset = datasets.find(dataset => dataset.id === selectedId); // Find dataset by ID
+               
+                if (selectedDataset) {
+                  setRowSelectionModel(selectedId);
+                  onDatasetSelect({ id: selectedId, name: selectedDataset.dataset_name, geneCountNumber: selectedDataset.dataset_gene_count }); // Pass both ID and name
+                }
+              } 
+              // const singleSelection = newRowSelectionModel.slice(-1); // Keep only the last selected row
+              // setRowSelectionModel(singleSelection);
+              // onDatasetSelect(singleSelection);
               // setRowSelectionModel(newRowSelectionModel);
               // const selectedDatasetIds = newRowSelectionModel.map((id) => id);
               // onDatasetSelect(selectedDatasetIds);

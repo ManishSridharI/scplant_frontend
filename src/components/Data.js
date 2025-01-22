@@ -11,8 +11,9 @@ import ButtonBase from '@mui/material/ButtonBase'
 const items = [
   {
     icon: <InsightsIcon />,
-    title: 'Arabidopsis (SRP 171)',
+    title: 'Arabidopsis thaliana (SRP171040)',
     dataset_info_id: 4,
+    dataset_gene_count: 20000,
     description: 'SRP 171',
     genes: '53,678',
     cells: '1.2M',
@@ -21,8 +22,9 @@ const items = [
   },
   {
     icon: <InsightsIcon />,
-    title: 'Arabidopsis (SRP 235)',
+    title: 'Arabidopsis thaliana (SRP235541)',
     dataset_info_id: 5,
+    dataset_gene_count: 20000,
     description: 'SRP 235',
     genes: '53,678',
     cells: '1.2M',
@@ -31,8 +33,9 @@ const items = [
   },
   {
     icon: <InsightsIcon />,
-    title: 'Arabidopsis (SRP 330)',
+    title: 'Arabidopsis thaliana (SRP330542)',
     dataset_info_id: 6,
+    dataset_gene_count: 20000,
     description: 'SRP 330',
     genes: '53,678',
     cells: '1.2M',
@@ -41,9 +44,10 @@ const items = [
   },
   {
     icon: <InsightsIcon />,
-    title: 'Zmays (SRP 335)',
+    title: 'Zea mays (SRP335180)',
     dataset_info_id: 1,
     description: 'SRP 335',
+    dataset_gene_count: 10000,
     genes: '67,300',
     cells: '35K',
     datasets: '9',
@@ -51,9 +55,10 @@ const items = [
   },
   {
     icon: <InsightsIcon />,
-    title: 'Osativia (SRP 286)',
+    title: 'Oryza sativa (SRP286275)',
     dataset_info_id: 2,
     description: 'SRP 286',
+    dataset_gene_count: 20000,
     genes: '57,623',
     cells: '417K',
     datasets: '5',
@@ -61,9 +66,10 @@ const items = [
   },
   {
     icon: <InsightsIcon />,
-    title: 'GlycineMax (Flowerbud)',
+    title: 'Glycine max (in-house dataset)',
     dataset_info_id: 3,
     description: 'Flowerbud',
+    dataset_gene_count: 20000,
     genes: '97,824',
     cells: '141K',
     datasets: '11',
@@ -75,17 +81,18 @@ const items = [
 export default function Data({ onDatasetClick }) {
   const [selectedId, setSelectedId] = React.useState(null);
 
-  const handleDatasetClick = (datasetId) => {
+  const handleDatasetClick = (datasetId, datasetName, geneCountNumber) => {
+    onDatasetClick({ id: datasetId, name: datasetName, geneCountNumber: geneCountNumber});
     setSelectedId(datasetId); // Update the selected ID
-    if (onDatasetClick) {
-      onDatasetClick(datasetId); // Trigger the parent handler if provided
-    }
+    // if (onDatasetClick) {
+    //   onDatasetClick(datasetId); // Trigger the parent handler if provided
+    // }
   };
   return (
     <Box
       id="pricing"
       sx={{
-        pt: { xs: 8, sm: 16 },
+       pt: { xs: 2, sm: 4 },
         pb: { xs: 4, sm: 8 },
         // color: 'white',
         // bgcolor: 'grey.900',
@@ -106,12 +113,12 @@ export default function Data({ onDatasetClick }) {
             textAlign: { sm: 'left', md: 'center' },
           }}
         >
-          <Typography component="h2" variant="h4" gutterBottom>
-            Datasets
+          <Typography component="h6" variant="h6" gutterBottom>
+           Public  Datasets
           </Typography>
-          <Typography variant="body1" sx={{ color: 'grey.400' }}>
+          {/* <Typography variant="body1" sx={{ color: 'grey.400' }}>
             Upload your own/ use our datasets
-          </Typography>
+          </Typography> */}
         </Box>
         <Grid container spacing={2}>
           {items.map((item, index) => (
@@ -127,7 +134,7 @@ export default function Data({ onDatasetClick }) {
               }}
              // onClick={() => console.log(`${item.title} button clicked!`)} // You can add your actual click handler here
               //onClick={() => onDatasetClick(item.dataset_info_id)}
-              onClick={() => handleDatasetClick(item.dataset_info_id)}
+              onClick={() => handleDatasetClick(item.dataset_info_id,item.title,item.dataset_gene_count)}
             >
               <Stack
                 direction="column"

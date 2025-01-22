@@ -15,7 +15,7 @@ import { styled } from '@mui/material/styles';
 const StyledBox = styled('div')(({ theme }) => ({
   alignSelf: 'center',
   width: '100%',
-  height: 400,
+  height: '1000px !important',
   marginTop: theme.spacing(8),
   borderRadius: (theme.vars || theme).shape.borderRadius,
   outline: '6px solid',
@@ -23,7 +23,7 @@ const StyledBox = styled('div')(({ theme }) => ({
   border: '1px solid',
   borderColor: (theme.vars || theme).palette.grey[200],
   boxShadow: '0 0 12px 8px hsla(220, 25%, 80%, 0.2)',
-  backgroundImage: `url('home.jpg')`,
+  backgroundImage: `url('homepage.png')`,
   backgroundSize: 'cover',
   [theme.breakpoints.up('sm')]: {
     marginTop: theme.spacing(10),
@@ -31,7 +31,7 @@ const StyledBox = styled('div')(({ theme }) => ({
   },
   ...theme.applyStyles('dark', {
     boxShadow: '0 0 24px 12px hsla(210, 100%, 25%, 0.2)',
-    backgroundImage: `url('home.jpg')`,
+    backgroundImage: `url('homepage.png')`,
     outlineColor: 'hsla(220, 20%, 42%, 0.1)',
     borderColor: (theme.vars || theme).palette.grey[700],
   }),

@@ -12,13 +12,13 @@ import FacebookIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/X';
 import SitemarkIcon from './scPlantIcon';
-import ScPlantIcon from './scPlantIcon';
+import ScPlantIconFooter from './scPlantIconFooter';
 
 function Copyright() {
   return (
     <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
       {'Copyright © '}
-        scPlant
+        scPlantAnnotate
       &nbsp;
       {new Date().getFullYear()}
     </Typography>
@@ -54,7 +54,7 @@ export default function Footer() {
           }}
         >
           <Box sx={{ width: { xs: '100%', sm: '60%' } }}>
-            <ScPlantIcon />
+            <ScPlantIconFooter />
             <Typography variant="body2" gutterBottom sx={{ fontWeight: 600, mt: 2 }}>
               Have questions?
             </Typography>
@@ -141,6 +141,9 @@ export default function Footer() {
             Team
           </Typography>
           <Typography color="text.secondary" variant="body2" href="#">
+            Trupti Joshi
+          </Typography>
+          <Typography color="text.secondary" variant="body2" href="#">
             Chunyang Lu
           </Typography>
           <Typography color="text.secondary" variant="body2" href="#">
@@ -149,9 +152,7 @@ export default function Footer() {
           <Typography color="text.secondary" variant="body2" href="#">
             Yen On Chan
           </Typography>
-          <Typography color="text.secondary" variant="body2" href="#">
-            Trupti Joshi
-          </Typography>
+          
         </Box>
       </Box>
       <Box

@@ -14,25 +14,33 @@ export default function Model(props) {
   const location = useLocation();
   const navigate = useNavigate();
   const { datasetIds } = location.state || {};
+  const { selectedModel } = location.state || {};
+  const { selectedDatasetName } = location.state || {};
+  let geneCountNumber = 20000;
+  let { fileExtension } = location.state || {};
   // console.log(datasetIds,'modelpage');
   
  // const datasetId = parseInt(datasetIds[0], 10);
 
   const [jobName, setjobName] = React.useState('');
-  const [geneNumber, setgeneNumber] = React.useState(''); 
+  //let geneNumber = '20000'; 
 
   const handlejobNameChange = (event) => {
     setjobName(event.target.value);
   };
 
-  const handlegeneNumberChange = (event) => {
-    setgeneNumber(event.target.value);
-  };
+  // const handlegeneNumberChange = (event) => {
+  //   setgeneNumber(event.target.value);
+  // };
 
-  const [selectedModel, setSelectedModel] = React.useState(null);
-  const handleModelSelect = (selectedModel) => {
-    setSelectedModel(selectedModel);
-  };
+  // const [selectedModel, setSelectedModel] = React.useState(null);
+  // const handleModelSelect = (selectedModel) => {
+  //   setSelectedModel(selectedModel);
+  // };
+  
+
+
+
 
   const [selectedScript, setselectedScript] = React.useState(null);
   const handleScriptSelect = (selectedScript) => {
@@ -53,13 +61,33 @@ export default function Model(props) {
       alert('Please login first to proceed.');
       navigate('/signin');
     } else {
-      const datasetId = parseInt(datasetIds[0], 10);
+
+      if (!datasetIds || !selectedModel) {
+        alert('Please select a dataset to proceed.');
+        navigate('/dataset');
+        return;
+      }
+
+      const datasetId = datasetIds;
+
+      if (!fileExtension){
+        fileExtension = 'h5ad';
+      };
+
+      if (selectedModel===2){
+        geneCountNumber=10000;
+      };
+
+      // if (datasetId===1){
+      //   geneNumber='10000'
+      // }
 
       const commonData = {
         job_dataset: datasetId,
         job_predictor: selectedModel,
-        job_name: jobName,
-        gene_number: geneNumber, // Single input field
+        dataset_name: selectedDatasetName,
+        data_type: fileExtension,
+        gene_number: geneCountNumber, // Single input field
       };
 
       // const job_info = [
@@ -93,11 +121,13 @@ export default function Model(props) {
         requestData = {
           job_dataset: commonData.job_dataset,
           job_predictor: commonData.job_predictor,
-          job_name: commonData.job_name,
+          job_name: commonData.dataset_name + "_inference",
+          job_inference_data_type: commonData.data_type,
           job_script: 1,
           job_inference_gene_number: commonData.gene_number,
           job_inference_log_filename: "Log001",
           job_inference_prediction_filename: "Prediction001",
+          job_inference_stats_filename: "Stat001",
           job_inference_stdout_filename: "Stdout001",
           job_inference_stderr_filename: "Stderr001",
         };
@@ -107,7 +137,8 @@ export default function Model(props) {
         requestData = {
           job_dataset: commonData.job_dataset,
           job_predictor: commonData.job_predictor,
-          job_name: commonData.job_name,
+          job_name: commonData.dataset_name + "_annotate&plot",
+          job_annotate_and_plot_data_type: commonData.data_type,
           job_script: 2,
           job_annotate_and_plot_gene_number: commonData.gene_number,
           job_annotate_and_plot_log_filename: "Log001",
@@ -174,7 +205,8 @@ export default function Model(props) {
 
   return (
       <div>
-        <Models onModelSelect={handleModelSelect}/>
+        
+        {/* <Models onModelSelect={handleModelSelect}/> */}
         <Scripts onScriptSelect={handleScriptSelect}/>
         <Box
       id="pricing"
@@ -187,9 +219,9 @@ export default function Model(props) {
       
       }}
     >
-      <Typography variant="h5" component="h2" gutterBottom>
-        Insert Job Name and Gene Number
-      </Typography>
+      {/* <Typography variant="h5" component="h2" gutterBottom>
+        Insert Job Name 
+      </Typography> */}
       <Box
         sx={{
           display: 'flex',
@@ -200,7 +232,7 @@ export default function Model(props) {
           maxWidth: 500,
         }}
       >
-         <Grid2 container spacing={2} >
+         {/* <Grid2 container spacing={2} >
         <Grid2 item xs={6} sm={6}>
           <TextField
             label="Job Name"
@@ -211,7 +243,21 @@ export default function Model(props) {
             required
           />
         </Grid2>
-        <Grid2 item xs={6} sm={6}>
+        <Grid2 item xs={12} sm={6}> */}
+        <Button
+        //onClick={handlePrediction}
+        variant="contained"
+        color={(selectedScript) ? "primary" : "inherit"} // Lighter color when no file or link
+        onClick={(selectedScript) ? handlePrediction : null} // Disable click when no file or link
+        sx={{
+          backgroundColor: (selectedScript) ? '' : 'grey.300', // Lighter background when disabled
+          cursor: (selectedScript) ? 'pointer' : 'not-allowed', // Change cursor to 'not-allowed' if disabled
+        }}
+      >
+        Proceed to Prediction
+      </Button>
+      {/* </Grid2> */}
+        {/* <Grid2 item xs={6} sm={6}>
           <TextField
             label="Gene Number"
             variant="outlined"
@@ -220,12 +266,12 @@ export default function Model(props) {
             onChange={handlegeneNumberChange}
             required
           />
-        </Grid2>
-        </Grid2>
+        </Grid2> */}
+        {/* </Grid2> */}
         </Box>
         </Box>
 
-        <Box
+        {/* <Box
       sx={{
         display: 'flex',
         justifyContent: 'center', // Align horizontally to center
@@ -239,7 +285,7 @@ export default function Model(props) {
       >
         Proceed to Prediction
       </Button>
-      </Box>
+      </Box> */}
       </div>
   );
 }

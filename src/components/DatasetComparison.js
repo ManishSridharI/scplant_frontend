@@ -26,7 +26,7 @@ export default function DatasetComparison() {
 
   React.useEffect(() => {
     if (user && csrfToken) {
-      fetch(`/api/datasets/api/dataset_query_public/`, {
+      fetch(`/api/datasets/api/dataset_query_uploaded_and_public/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export default function DatasetComparison() {
       })
         .then((response) => response.json())
         .then((data) => {
-          if (data.isDatasetQueryPublic) {
+          if (data.isDatasetQueryUploadedAndPublic) {
             const formattedDatasets = data.Dataset.map((dataset) => ({
               id: dataset.id,
               dataset_name: dataset.dataset_name,
@@ -237,8 +237,14 @@ export default function DatasetComparison() {
           />
        </Grid2>
        <Grid2 item xs={6} sm={6}>
-      <Button  onClick={handleSubmit}
-        variant="contained">
+      <Button // onClick={handleSubmit}
+        variant="contained"
+        color={(controlDataset && condition1Dataset && jobName) ? "primary" : "inherit"} // Lighter color when no file or link
+        onClick={(controlDataset && condition1Dataset && jobName) ? handleSubmit : null} // Disable click when no file or link
+        sx={{
+          backgroundColor: (controlDataset && condition1Dataset && jobName) ? '' : 'grey.300', // Lighter background when disabled
+          cursor: (controlDataset && condition1Dataset && jobName) ? 'pointer' : 'not-allowed', // Change cursor to 'not-allowed' if disabled
+        }}>
             Perform Treatment vs Control 
         </Button>
         </Grid2>

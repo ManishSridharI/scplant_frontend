@@ -52,10 +52,10 @@ export default function Compare(props) {
         >
           Compare
         </Typography>
-        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-          Compare Data across different condition.<br />
+        <Typography variant="h7" sx={{ color: 'text.secondary' }}>
+          Compare Datasets across different condition.<br />
         </Typography>
-        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+        <Typography variant="h7" sx={{ color: 'text.secondary' }}>
         Compare cell type distributions in different predictions.<br />
         </Typography>
         </Box>

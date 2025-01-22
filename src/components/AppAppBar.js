@@ -69,12 +69,15 @@ export default function AppAppBar() {
               <Button component={Link} to="/intro" variant="text" color="info" size="large">
                 Introduction
               </Button>
+              <Button component={Link} to="/organism" variant="text" color="info" size="large">
+                Organisms
+              </Button>
               <Button component={Link} to="/dataset" variant="text" color="info" size="large">
                 Datasets
               </Button>
-              <Button component={Link} to="/model" variant="text" color="info" size="large">
+              {/* <Button component={Link} to="/model" variant="text" color="info" size="large">
                 Models
-              </Button>
+              </Button> */}
               <Button component={Link} to="/results" variant="text" color="info" size="large">
                 Results
               </Button>
@@ -84,9 +87,9 @@ export default function AppAppBar() {
               <Button variant="text" target="_blank" href="https://github.com/ManishSridharI/scplant_backend" color="info" size="large">
                 GitHub
               </Button>
-              <Button component={Link} to="/about" variant="text" color="info" size="large" sx={{ minWidth: 0 }}>
+              {/* <Button component={Link} to="/about" variant="text" color="info" size="large" sx={{ minWidth: 0 }}>
                 About Us
-              </Button>
+              </Button> */}
               {/* <Button component={Link} to="/contact" variant="text" color="info" size="large" sx={{ minWidth: 0 }}>
                 Contact
               </Button> */}

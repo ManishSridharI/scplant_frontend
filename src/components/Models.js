@@ -16,39 +16,43 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 const tiers = [
   {
     title: 'Regular',
-    organism: 'Arabidopsis',
+    organism: 'Arabidopsis thaliana',
     id: 1,
     description: ['13 Million Parameters', '20K HVGs', 'Adam Optimizer', 'CosineAnnealingWarmRestarts'],
     buttonText: 'Select',
     buttonVariant: 'contained',
+    genecount: 20000,
     buttonColor: 'primary',
   },
   {
     title: 'Regular',
     subheader: 'Our best model',
-    organism: 'Zmays',
+    organism: 'Zea mays',
     id: 2,
     description: ['13 Million Parameters', '20K HVGs', 'Adam Optimizer', 'CosineAnnealingWarmRestarts'],
     buttonText: 'Select',
     buttonVariant: 'contained',
+    genecount: 10000,
     buttonColor: 'primary',
   },
   {
     title: 'Regular',
-    organism: 'Osativa',
+    organism: 'Oryza sativa',
     id: 3,
     description: ['13 Million Parameters', '20K HVGs', 'Adam Optimizer', 'CosineAnnealingWarmRestarts'],
     buttonText: 'Select',
     buttonVariant: 'contained',
+    genecount:20000,
     buttonColor: 'primary',
   },
   {
     title: 'Regular',
-    organism: 'GlycineMax',
+    organism: 'Glycine max',
     id: 4,
     description: ['13 Million Parameters', '20K HVGs', 'Adam Optimizer', 'CosineAnnealingWarmRestarts'],
     buttonText: 'Select',
     buttonVariant: 'contained',
+    genecount: 20000,
     buttonColor: 'primary',
   },
 ];
@@ -66,7 +70,7 @@ export default function Models({ onModelSelect }) {
       id="pricing"
       sx={{
         pt: { xs: 8, sm: 16 },
-        pb: { xs: 6, sm: 8 },
+        pb: { xs: 2, sm: 4 },
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
@@ -86,11 +90,11 @@ export default function Models({ onModelSelect }) {
           gutterBottom
           sx={{ color: 'text.primary' }}
         >
-          Models
+          Organisms
         </Typography>
-        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-          Choose among our models. <br />
-          They are built with precision and accuracy.
+        <Typography variant="h7" sx={{ color: 'text.secondary' }}>
+          Select any organism below. <br />
+          Our models currently supports only 4 organisms.
         </Typography>
       </Box>
       <Grid
@@ -139,15 +143,16 @@ export default function Models({ onModelSelect }) {
                       : { color: null },
                   ]}
                 >
-                  <Typography component="h3" variant="h2" sx={{fontSize: "1.5rem"}}>
+                  <Typography component="h3" variant="h2" sx={{fontSize: "1.25rem"}}>
                     {tier.organism}
                   </Typography>
                   <Typography component="h3" variant="h6">
                     &nbsp; 
                   </Typography>
+                  
                 </Box>
-                {/* <Divider sx={{ my: 2, opacity: 0.8, borderColor: 'divider' }} /> */}
-                {/* {tier.description.map((line) => (
+                {/* <Divider sx={{ my: 2, opacity: 0.8, borderColor: 'divider' }} />
+                {tier.genecount.map((line) => (
                   <Box
                     key={line}
                     sx={{ py: 1, display: 'flex', gap: 1.5, alignItems: 'center' }}
@@ -171,7 +176,7 @@ export default function Models({ onModelSelect }) {
                           : { color: null },
                       ]}
                     >
-                      {line}
+                      Gene Counts: {line}
                     </Typography>
                   </Box>
                 ))} */}
@@ -190,7 +195,11 @@ export default function Models({ onModelSelect }) {
               </CardActions>
             </Card>
           </Grid>
+          
         ))}
+        <Typography variant="h7" sx={{ color: 'text.secondary' }}>
+          More organisms coming soon... <br />
+        </Typography>
       </Grid>
     </Container>
   );

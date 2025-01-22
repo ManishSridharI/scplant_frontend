@@ -7,7 +7,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import InsightsIcon from '@mui/icons-material/Insights';
 import ButtonBase from '@mui/material/ButtonBase'
-
+import EmailIcon from '@mui/icons-material/Email';
+import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 
 export default function Data() {
   return (
@@ -16,8 +17,8 @@ export default function Data() {
       sx={{
         pt: { xs: 8, sm: 16 },
         pb: { xs: 8, sm: 16 },
-        color: 'white',
-        bgcolor: 'grey.900',
+        color: 'black',
+     //   bgcolor: 'grey.900',
       }}
     >
       <Container
@@ -38,8 +39,23 @@ export default function Data() {
           <Typography component="h2" variant="h4" gutterBottom>
             Contact Us
           </Typography>
-          <Typography variant="body1" sx={{ color: 'grey.400' }}>
-            
+          <Typography variant="h6" sx={{ marginTop:'1.5rem', color: 'grey.400' }}>
+             Our Location <GpsFixedIcon />
+          </Typography>
+          <Typography component="h4" variant="h4" gutterBottom sx={{ marginTop:'1rem', fontSize: '1rem' }}>
+          Math Science Builing, University of Missouri
+          </Typography>
+          <Typography component="h4" variant="h4" gutterBottom sx={{ fontSize: '1rem' }}>
+          Columbia, Missouri
+          </Typography>
+          <Typography variant="h6" sx={{ marginTop:'2rem',color: 'grey.400' }}>
+             Email your queries and feedback to below
+          </Typography>
+          <Typography component="h4" variant="h4" gutterBottom sx={{ marginTop:'1rem', fontSize: '1rem' }}>
+          <a href="mailto:JoshiTr@missouri.edu" style={{ color: 'inherit'}}><EmailIcon />&nbsp;Trupti Joshi</a>
+          </Typography>
+          <Typography component="h4" variant="h4" gutterBottom sx={{ fontSize: '1rem' }}>
+          <a href="mailto:clcdp@missouri.edu" style={{ color: 'inherit'}}><EmailIcon />&nbsp;Chunyang Lu</a>
           </Typography>
         </Box>
         

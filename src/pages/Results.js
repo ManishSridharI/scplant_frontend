@@ -151,6 +151,7 @@ const handleDownload = (row) => {
         payload = { job_inference_file_output_id: filesId };
         fileKeys = {
           prediction: "job_inference_prediction_file",
+          stats: "job_inference_stats_file",
           stderr: "job_inference_stderr_file",
         };
         rootKey = "JobInferenceFileOutput";
@@ -282,11 +283,11 @@ const handleDownload = (row) => {
   
 
   const columns = [
-    { field: 'testName', headerName: 'Test Name', flex: 1 },
+    { field: 'testName', headerName: 'Test Name', flex: 1.5 },
     {
       field: 'status',
       headerName: 'Status',
-      flex: 1,
+      flex: 0.5,
       renderCell: (params) => {
         let color = 'inherit';
         if (params.value === 'SUCCESS') color = 'green';
@@ -300,12 +301,12 @@ const handleDownload = (row) => {
         );
       },
     },
-    { field: 'type', headerName: 'Prediction Type', flex: 1 },
-    { field: 'creationTime', headerName: 'Creation Time', flex: 1 },
+    { field: 'type', headerName: 'Prediction Type', flex: 0.75 },
+    { field: 'creationTime', headerName: 'Creation Time', flex: 0.75 },
     {
       field: 'download',
       headerName: 'Download',
-      flex: 1,
+      flex: 0.6,
       renderCell: (params) => (
         
         <Button
@@ -390,6 +391,11 @@ const handleDownload = (row) => {
           columns={columns} 
         loading={loading} // Show loading spinner during data fetch
           disableSelectionOnClick
+          initialState={{
+            sorting: {
+              sortModel: [{ field: 'creationTime', sort: 'desc' }], // Default sorting by 'creationTime' in descending order
+            },
+          }}
           // autoHeight
           sx={{
             height: 600,

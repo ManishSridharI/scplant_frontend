@@ -18,27 +18,40 @@ import ViewQuiltRoundedIcon from '@mui/icons-material/ViewQuiltRounded';
 const items = [
   {
     icon: <LooksOneIcon />,
-    title: 'Step 1',
+    title: 'Introduction',
     description:
-      'Choose from our Datasets/ Upload your own',
-    imageLight: `url("/datasets.png")`,
-    imageDark: `url("/datasets.png")`,
+      'scPlantAnnotate annotates cell types for plants.',
+    imageLight: `url("/introduction.png")`,
+    imageDark: `url("/introduction.png")`,
+    description2:
+    'Cell type annotation is fundamental for interpreting scRNA-seq data in biomedical and plant research, as it enables detailed insights into cellular composition, function, and dynamics within tissues. This understanding leads to significant insights into biology, development, and responses to environmental changes. ',
+    description3:
+    'The scPlantAnnotate server can annotate cell types for four plant species: Arabidopsis thaliana, Zea mays, Glycine max, and Oryza sativa. Users can upload scRNA-seq data files (currently only h5ad file format is supported) for annotation. We also provided an example dataset for each plant species.',
   },
   {
     icon: <LooksTwoIcon />,
-    title: 'Step 2',
+    title: 'Models and Datasets',
     description:
-      'Choose a model and create Job for prediction',
+      'Transformer-based models trained on diverse datasets.',
     imageLight: `url("/models.png")`,
     imageDark: `url("/models.png")`,
+    description2:
+    'scPlantAnnotate is a Transformer-based deep learning model. It consists of five transformer layers followed by dense layers for different tasks. It adopted a two-stage training strategy(pretraining and finetuning). The advantage is that pretraining is a self-supervised training which does not need data to be labeled, therefore it can leverage large amounts of scRNA-seq data to make the model learn gene co-expression patterns, making the model more robust to batch effect. Another advantage is that the latent representation obtained from the pretrained model can be used for many different downstream tasks, making it a foundational model, although in this study we specifically only focus on one downstream task -- cell type annotation.',
+    description3:
+    'scPlantAnnotate-unified model for Arabidopsis  trained on 28 datasets spanning all tissues, comprising 1.2 million cells spanning 50 cell types. scPlantAnnotate-unified model for Zmays trained on 9 datasets with a total of 351,000 cells spanning 38 cell types. scPlantAnnotate-unified model for Osativa was trained on five datasets with a total of 417,000 cells spanning 38 cell types. scPlantAnnotate-unified model for Glycine max was trained on ten datasets with a total of 116,000 cells spanning 42 cell types.',
+
   },
   {
     icon: <Looks3Icon />,
-    title: 'Step 3',
+    title: 'Predictions',
     description:
-      'View the results by dowloading files',
+      'High-throughput scRNA-seq data annotation.',
     imageLight: `url("/results.jpeg")`,
     imageDark: `url("/results.jpeg")`,
+    description2:
+    'scPlantAnnotate will annotate cell types for each dataset and generates a comprehensive output, including a CSV file of predicted cell types, cluster visualization figures using t-SNE and UMAP, and a dot-plot of cluster-specific marker genes. For multiple scRNA-seq data files with different conditions, the service also performs cross-condition analyses, such as identifying marker genes and comparing cell type distributions. The data processing tasks in the scPlantAnnotate are designed to queue and execute automatically depending on the hosting server resource availability. Results are typically available in minutes to a few hours, depending on the server resource usage. The scPlantAnnotate is optimized for high-throughput scRNA-seq data annotation to enable researchers to quickly obtain reliable and reproducible cell-type annotations without requiring extensive computational expertise. ',
+    description3:
+    '',
   },
 ];
 
@@ -159,24 +172,17 @@ export default function Process() {
           Workflow
         </Typography>
         <Typography
-          variant="body1"
+          variant="h6"
           sx={{ color: 'text.secondary', mb: { xs: 2, sm: 4 } }}
         >
           See below to understand the process of scPlantAnnotate.
         </Typography>
       </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row-reverse' },
-          gap: 2,
-        }}
-      >
-        <div>
+      <div>
           <Box
             sx={{
               display: { xs: 'none', sm: 'flex' },
-              flexDirection: 'column',
+              flexDirection: 'row',
               gap: 2,
               height: '100%',
             }}
@@ -231,10 +237,31 @@ export default function Process() {
             selectedFeature={selectedFeature}
           />
         </div>
+      
+      <Box sx={{ m2: 4,mb: 4, p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
+  <Typography variant="h6" sx={{ color: 'text.primary', mb: 1, fontSize:'1.5rem' }}>
+    {selectedFeature.title}
+  </Typography>
+  <Typography variant="body2" sx={{marginTop:'5px',color: 'text.secondary', fontSize:'1rem' }}>
+    {selectedFeature.description2}
+    </Typography>
+
+    <Typography variant="body2" sx={{ marginTop:'10px', color: 'text.secondary', fontSize:'1rem' }}>
+    {selectedFeature.description3}
+  </Typography>
+</Box>
+<Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row-reverse' },
+          gap: 2,
+        }}
+      >
+        
         <Box
           sx={{
             display: { xs: 'none', sm: 'flex' },
-            width: { xs: '100%', md: '70%' },
+            width: { xs: '100%', md: '100%' },
             height: 'var(--items-image-height)',
           }}
         >
@@ -250,8 +277,8 @@ export default function Process() {
             <Box
               sx={(theme) => ({
                 m: 'auto',
-                width: 420,
-                height: 500,
+                width: 1200,
+                height: 1000,
                 backgroundSize: 'contain',
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',

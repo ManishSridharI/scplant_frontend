@@ -11,7 +11,17 @@ import { useTheme } from '@mui/system';
 
 const userTestimonials = [
   {
-    avatar: <Avatar alt="Chunyang Lu" src="/static/images/avatar/1.jpg" />,
+    avatar: <Avatar alt="Trupti Joshi" src="/Trupti.jpg" />,
+    name: 'Dr. Trupti Joshi',
+    email: "joshitr@health.missouri.edu",
+    occupation: 'Associate Professor',
+    testimonial:
+      "Core Faculty MUIDSI, DPST, LSC, IPG, EECS",
+      testimonial2:
+      "Department of Biomedical Informatics, Biostatistics and Medical Epidemiology",
+  },
+  {
+    avatar: <Avatar alt="Chunyang Lu" src="chunyang.jpg" />,
     email: "clcdp@missouri.edu",
     name: 'Chunyang Lu',
     occupation: 'PhD Student',
@@ -37,12 +47,12 @@ const userTestimonials = [
       "Department of Electrical Engineering and Computer Science",
   },
   {
-    avatar: <Avatar alt="Trupti Joshi" src="/Trupti.jpg" />,
-    name: 'Trupti Joshi',
-    email: "joshitr@health.missouri.edu",
-    occupation: 'Assistant Professor',
+    avatar: <Avatar alt="Dong Xu" src="/Dong.jpg" />,
+    name: 'Dr. Dong Xu',
+    email: "xudong@missouri.edu",
+    occupation: 'Curators Distinguished Professor',
     testimonial:
-      "Core Faculty MUIDSI, DPST, LSC, IPG, EECS",
+      "Collaborator - AAAAS, AIMBE Core Faculty, LAS, IDSI, IPG",
       testimonial2:
       "Department of Biomedical Informatics, Biostatistics and Medical Epidemiology",
   },

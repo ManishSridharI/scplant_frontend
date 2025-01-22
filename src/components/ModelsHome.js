@@ -16,9 +16,9 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 const tiers = [
   {
     title: 'Regular',
-    organism: 'Arabidopsis',
+    organism: 'Arabidopsis thaliana',
     id: 1,
-    description: ['Inference', 'Annotate and Plot', 'Control vs Treatment', 'Compare Cell Types'],
+    description: ['Annotate and Plot', 'Control vs Treatment', 'Compare Cell Types'],
     buttonText: 'Select',
     buttonVariant: 'contained',
     buttonColor: 'primary',
@@ -26,27 +26,27 @@ const tiers = [
   {
     title: 'Regular',
     subheader: 'Our best model',
-    organism: 'Zmays',
+    organism: 'Zea mays',
     id: 2,
-    description: ['Inference', 'Annotate and Plot', 'Control vs Treatment', 'Compare Cell Types'],
+    description: [ 'Annotate and Plot', 'Control vs Treatment', 'Compare Cell Types'],
     buttonText: 'Select',
     buttonVariant: 'contained',
     buttonColor: 'primary',
   },
   {
     title: 'Regular',
-    organism: 'Osativa',
+    organism: 'Oryza sativa',
     id: 3,
-    description: ['Inference', 'Annotate and Plot', 'Control vs Treatment', 'Compare Cell Types'],
+    description: [ 'Annotate and Plot', 'Control vs Treatment', 'Compare Cell Types'],
     buttonText: 'Select',
     buttonVariant: 'contained',
     buttonColor: 'primary',
   },
   {
     title: 'Regular',
-    organism: 'GlycineMax',
+    organism: 'Glycine max',
     id: 4,
-    description: ['Inference', 'Annotate and Plot', 'Control vs Treatment', 'Compare Cell Types'],
+    description: ['Annotate and Plot', 'Control vs Treatment', 'Compare Cell Types'],
     buttonText: 'Select',
     buttonVariant: 'contained',
     buttonColor: 'primary',
@@ -82,9 +82,9 @@ export default function ModelsHome() {
         >
           Models
         </Typography>
-        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+        <Typography variant="h6" sx={{ color: 'text.secondary' }}>
           Choose among our models. <br />
-          They are built with precision and accuracy.
+          
         </Typography>
       </Box>
       <Grid
@@ -133,7 +133,7 @@ export default function ModelsHome() {
                       : { color: null },
                   ]}
                 >
-                  <Typography component="h3" variant="h2" sx={{fontSize: "2rem"}}>
+                  <Typography component="h3" variant="h2" sx={{fontSize: "1.3rem"}}>
                     {tier.organism}
                   </Typography>
                   <Typography component="h3" variant="h6">

@@ -11,7 +11,7 @@ import ButtonBase from '@mui/material/ButtonBase'
 const items = [
   {
     icon: <InsightsIcon />,
-    title: 'Arabidopsis (SRP 171)',
+    title: 'Arabidopsis thaliana',
     dataset_info_id: 4,
     description: 'SRP 171',
     genes: '53,678',
@@ -21,7 +21,7 @@ const items = [
   },
   {
     icon: <InsightsIcon />,
-    title: 'Zmays (SRP 335)',
+    title: 'Zea mays ',
     dataset_info_id: 1,
     description: 'SRP 335',
     genes: '67,300',
@@ -31,7 +31,7 @@ const items = [
   },
   {
     icon: <InsightsIcon />,
-    title: 'Osativia (SRP 286)',
+    title: 'Oryza sativa ',
     dataset_info_id: 2,
     description: 'SRP 286',
     genes: '57,623',
@@ -41,7 +41,7 @@ const items = [
   },
   {
     icon: <InsightsIcon />,
-    title: 'GlycineMax (Flowerbud)',
+    title: 'Glycine max',
     dataset_info_id: 3,
     description: 'Flowerbud',
     genes: '97,824',
@@ -84,8 +84,8 @@ export default function DataHome() {
           <Typography component="h2" variant="h4" gutterBottom>
             Datasets
           </Typography>
-          <Typography variant="body1" sx={{ color: 'grey.400' }}>
-            Upload your own/ use our datasets
+          <Typography variant="h6" sx={{ color: 'grey.400' }}>
+            Use our demo datasets as examples
           </Typography>
         </Box>
         <Grid container spacing={2}>
@@ -94,7 +94,7 @@ export default function DataHome() {
               <ButtonBase
               component="div"
               sx={{
-                width: '100%',
+                width: '250px',
                 height: "100%",
                 textAlign: 'left',
                 display: 'block',

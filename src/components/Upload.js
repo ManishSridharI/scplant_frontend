@@ -8,50 +8,87 @@ import { useState } from 'react';
 import { Grid2 } from '@mui/material';
 import { useAuth } from '../Auth';
 import { useNavigate } from 'react-router-dom';
+import { FormControlLabel, Switch } from '@mui/material';
 
-export default function Upload() {
+export default function Upload({ onDatasetUpload, onDatasetUploadRefresh }) {
   const { user, csrfToken } = useAuth(); 
   const navigate = useNavigate(); 
   const [file, setFile] = useState(null);
   const [driveLink, setDriveLink] = useState('');
   const [datasetName, setDatasetName] = useState('');
-  const [DescriptionFlag, setDescriptionFlag] = useState('');
+  const [DescriptionFlag, setDescriptionFlag] = useState(0);
   const [description, setDescription] = useState('');
   const [errorMessage, setErrorMessage] = useState(''); 
+  const [fileExtension, setfileExtension] =useState('');
+  const [geneCount, setGeneCount] = useState(0);
 
   const handleDatasetNameChange = (event) => {
     setDatasetName(event.target.value);
   };
 
   const handleDescriptionChange = (event) => {
-    const input = event.target.value.toLowerCase().trim();
+    const isPublic = event.target.checked;
+    setDescriptionFlag(isPublic ? 1 : 0); // Store flag as 1 for 'yes' and 0 for 'no'
+    setDescription(isPublic ? 'Yes' : 'No'); // Store textual representation
+  };
+
+  // const handleDescriptionChange = (event) => {
+  //   const input = event.target.value.toLowerCase().trim();
+  
+  //   // Determine if input is 'yes' or 'no', and set flag accordingly
+  //   const descriptionFlag = input === 'yes' ? 1 : input === 'no' ? 0 : null;
+  
+  //   // If input is valid (yes or no), set description flag
+  //   if (descriptionFlag !== null) {
+  //     setDescriptionFlag(descriptionFlag);  // Store the flag (1 for 'yes' and 0 for 'no')
+  //   } else {
+  //     console.error('Invalid input. Please enter "yes" or "no".');
+  //   }
+    
+  //   // Update the description text
+  //   setDescription(event.target.value);
+  // };
+
+  const handleGeneCount = (event) => {
+    const input = event.target.value;
   
     // Determine if input is 'yes' or 'no', and set flag accordingly
-    const descriptionFlag = input === 'yes' ? 1 : input === 'no' ? 0 : null;
+    const geneCount = input;
   
     // If input is valid (yes or no), set description flag
-    if (descriptionFlag !== null) {
-      setDescriptionFlag(descriptionFlag);  // Store the flag (1 for 'yes' and 0 for 'no')
+    if (geneCount !== null) {
+      setGeneCount(geneCount);  // Store the flag (1 for 'yes' and 0 for 'no')
     } else {
-      console.error('Invalid input. Please enter "yes" or "no".');
+      console.error('Enter gene Count.');
     }
     
     // Update the description text
-    setDescription(event.target.value);
+    setGeneCount(event.target.value);
   };
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-   
-    if (selectedFile && selectedFile.size > 25 * 1024 * 1024) { // File size check for >25MB
-      setErrorMessage('File size exceeds 25MB. Please provide a drive link.');
-      setFile(null); // Reset file input
-    } else {
+
+    if (selectedFile) {
+      const fileName = selectedFile.name;
+      const fileExt = fileName.split('.').pop(); // Extract file extension
+      setfileExtension(fileExt)
+      console.log('File Extension:', fileExt);
+      onDatasetUpload(fileExt);
+    }
       setErrorMessage(''); // Clear any previous error
       setFile(selectedFile); // Set file if size is valid
+  
+    // if (selectedFile && selectedFile.size > 25 * 1024 * 1024) { // File size check for >25MB
+    //   setErrorMessage('File size exceeds 25MB. Please provide a drive link.');
+    //   setFile(null); // Reset file input
+    // } else {
+    //   setErrorMessage(''); // Clear any previous error
+    //   setFile(selectedFile); // Set file if size is valid
       
-    }
+    // }
   };
+  console.log(fileExtension);
  
   const handleLinkChange = (event) => {
     const value = event.target.value;
@@ -75,6 +112,7 @@ export default function Upload() {
       formData.append('dataset_file', file);
       formData.append('dataset_name', datasetName);
       formData.append('dataset_public_flag', DescriptionFlag);
+      formData.append('dataset_file_extension', fileExtension);
       //formData.append('user_id', user.id);
       console.log('FormData after append:', Array.from(formData.entries())); 
       fetch('/api/datasets/api/dataset_upload/', { // Ensure the URL matches your backend's endpoint
@@ -94,6 +132,8 @@ export default function Upload() {
             setErrorMessage(data.error);
           } else {
             console.log('File uploaded successfully:');
+            onDatasetUploadRefresh();
+            // setRefreshKey((prevKey) => prevKey + 1);
           }
         })
         .catch((error) => {
@@ -125,11 +165,11 @@ export default function Upload() {
       sx={{
         textAlign: { sm: 'left', md: 'center' },
         borderRadius: 2,
-        mt: 2,
+       // mt: 2,
       }}
     >
       <Typography variant="h5" component="h2" gutterBottom>
-        Upload File or Provide Drive Link
+        Upload File 
       </Typography>
       <Box
         sx={{
@@ -153,18 +193,41 @@ export default function Upload() {
           />
         </Grid2>
         <Grid2 item xs={12} sm={6}>
-          <TextField
+        <Typography variant="body"  sx={{fontSize: '0.9rem'}}>
+        Click here to download <a href="/corn_test.h5ad" download style={{ textDecoration: 'none', color: 'blue' }}> Example </a> file 
+      </Typography>
+        {/* <TextField
+            label="Enter Gene Count"
+            variant="outlined"
+            fullWidth
+            value={geneCount}
+            onChange={handleGeneCount}
+            required
+          /> */}
+          </Grid2>
+        <Grid2 item xs={12} sm={6}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={DescriptionFlag === 1} // Set checked state based on flag
+              onChange={handleDescriptionChange}
+              color="primary"
+            />
+          }
+          label="Do you want to make your dataset public?"
+        />
+          {/* <TextField
             label="Public (Yes/No)"
             variant="outlined"
             fullWidth
             value={description}
             onChange={handleDescriptionChange}
             required
-          />
+          /> */}
         </Grid2>
       </Grid2>
         <input
-          accept=".h5ad" 
+          accept=".h5ad, .rds, .10x" 
           id="file-upload"
           type="file"
           onChange={handleFileChange}
@@ -177,11 +240,17 @@ export default function Upload() {
         </label>
         {file && <Typography>{file.name}</Typography>}
         <Typography variant="body2" sx={{ color: 'grey.600' }}>
-          Upload only .h5ad files
+          We support .h5ad, .rds and 10x files
         </Typography>
+        <Typography variant="body2" sx={{ color: 'grey.600', fontStyle: 'italic' }}>
+          *Please upload the files similar to the example dataset to run your preidctions successfully
+        </Typography>
+        {/* <Typography variant="body2" sx={{ color: 'grey.600', fontStyle: 'italic' }}>
+          *Make sure to match the gene count number above to run your predictions successfully
+        </Typography> */}
         {/* Display error message if file is larger than 25MB */}
         
-        <Typography sx={{mt:1}} variant="h6" component="h6" gutterBottom>
+        {/* <Typography sx={{mt:1}} variant="h6" component="h6" gutterBottom>
        Or
       </Typography>
         <TextField
@@ -191,19 +260,19 @@ export default function Upload() {
           value={driveLink}
           onChange={handleLinkChange}
           helperText="Provide drive link if the file is larger than 25MB"
-        />
+        /> */}
 
      
 
 {errorMessage && <Typography color="error">{errorMessage}</Typography>}
         <Button
           variant="contained"
-          color={(file || driveLink) && datasetName ? "primary" : "inherit"} // Lighter color when no file or link
+          color={(file || driveLink) && datasetName  ? "primary" : "inherit"} // Lighter color when no file or link
           onClick={(file || driveLink) && datasetName ? handleUpload : null} // Disable click when no file or link
           fullWidth
           sx={{
             mt:2,
-            backgroundColor: (file || driveLink) && datasetName ? '' : 'grey.300', // Lighter background when disabled
+            backgroundColor: (file || driveLink) && datasetName  ? '' : 'grey.300', // Lighter background when disabled
             cursor: (file || driveLink) && datasetName ? 'pointer' : 'not-allowed', // Change cursor to 'not-allowed' if disabled
           }}
         >

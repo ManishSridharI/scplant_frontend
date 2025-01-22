@@ -23,6 +23,7 @@ import SignUp from './pages/SignUp';
 import { AuthProvider } from './Auth';
 import Results from './pages/Results';
 import Compare from './pages/Compare';
+import Organism from './pages/Organism';
 
 
 export default function App(props) {
@@ -35,8 +36,9 @@ export default function App(props) {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/intro" element={<Intro />} />
+          <Route path="/organism" element={<Organism />} />
           <Route path="/dataset" element={<Dataset />} />
-          <Route path="/model" element={<Model />} />
+          {/* <Route path="/model" element={<Model />} /> */}
           <Route path="/results" element={<Results />} />
           <Route path="/compare" element={<Compare />} />
           <Route path="/about" element={<About />} />

@@ -248,8 +248,14 @@ export default function PredictionComparison() {
           />
        </Grid2>
        <Grid2 item xs={6} sm={6}>
-      <Button  onClick={handleSubmit}
-        variant="contained">
+      <Button  //onClick={handleSubmit}
+        variant="contained"
+        color={(controlPrediction && condition1Prediction && jobName) ? "primary" : "inherit"} // Lighter color when no file or link
+        onClick={(controlPrediction && condition1Prediction && jobName) ? handleSubmit : null} // Disable click when no file or link
+        sx={{
+          backgroundColor: (controlPrediction && condition1Prediction && jobName) ? '' : 'grey.300', // Lighter background when disabled
+          cursor: (controlPrediction && condition1Prediction && jobName) ? 'pointer' : 'not-allowed', // Change cursor to 'not-allowed' if disabled
+        }}>
             Compare Cell Type Distributions 
         </Button>
         </Grid2>

@@ -61,7 +61,7 @@ export default function Scripts({ onScriptSelect }) {
     <Container
       id="pricing"
       sx={{
-        pt: { xs: 1, sm: 1 },
+        pt: { xs: 8, sm: 16 },
         pb: { xs: 6, sm: 8 },
         position: 'relative',
         display: 'flex',
@@ -76,8 +76,16 @@ export default function Scripts({ onScriptSelect }) {
           textAlign: { sm: 'left', md: 'center' },
         }}
       >
-        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-          Choose among our scripts. <br />
+        <Typography
+          component="h2"
+          variant="h4"
+          gutterBottom
+          sx={{ color: 'text.primary' }}
+        >
+          Predictors
+        </Typography>
+        <Typography variant="h6" sx={{ color: 'text.secondary' }}>
+          Choose the type of prediction you need to run. <br />
           
         </Typography>
       </Box>
