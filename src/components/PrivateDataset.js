@@ -5,67 +5,116 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
+import { Link } from 'react-router-dom';
 
-export default function PrivateData({ onDatasetSelect, refreshTrigger }) {
+export default function PrivateData({ selectedModel, onDatasetSelect, refreshTrigger }) {
   const { user, csrfToken } = useAuth(); // Get the logged-in user's info and CSRF token
   const [datasets, setDatasets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
 
   useEffect(() => {
-    console.log("useEffect triggered. Refresh Trigger:", refreshTrigger);
+    // console.log("useEffect triggered. Refresh Trigger:", refreshTrigger);
     if (user && csrfToken) {
-      // Sending user.id as a query parameter
-      fetch(`/api/datasets/api/dataset_query/`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken,  // Set CSRF token in the header
-            // Send authentication token
-        },
-        credentials: 'include',  // Ensure cookies are included in the request
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.isDatasetQuery) {
-            // Map the dataset response to the structure required by the DataGrid
-            const formattedDatasets = data.Dataset.map(dataset => ({
+      const fetchData = async () => {
+        try {
+          // Fetch from the first API: /api/h5addatasets/api/h5ad_dataset_query_uploaded_and_public/
+          const h5adResponse = await fetch(`/api/h5addatasets/api/h5ad_dataset_query_uploaded_and_public/`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken,
+              // Send authentication token
+            },
+            credentials: 'include',
+          });
+          const h5adData = await h5adResponse.json();
+  
+          // Fetch from the second API: /rdsdatasets/api/rds_dataset_query_uploaded_and_public/
+          const rdsResponse = await fetch(`/api/rdsdatasets/api/rds_dataset_query_uploaded_and_public/`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken,
+            },
+            credentials: 'include',
+          });
+          const rdsData = await rdsResponse.json();
+  
+          // Fetch from the third API: /tenxfeaturebcmatrixdatasets/api/tenxfbcm_dataset_query_uploaded_and_public/
+          const tenxResponse = await fetch(`/api/tenxfeaturebcmatrixdatasets/api/tenxfbcm_dataset_query_uploaded_and_public/`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken,
+            },
+            credentials: 'include',
+          });
+          const tenxData = await tenxResponse.json();
+  
+          // Combine the responses from all three APIs
+          const combinedData = [
+            ...h5adData.H5adDataset,
+            ...rdsData.RdsDataset,
+            ...tenxData.TenxfbcmDataset,
+          ];
+          console.log(combinedData);
+          const datasetMapping = {
+            1: "Arabidopsis thaliana",
+            2: "Zea mays",
+            3: "Oryza sativa",
+            4: "Glycine max",
+          };
+  
+          // Format the combined dataset
+          const formattedDatasets = combinedData
+            .map((dataset) => ({
               id: dataset.id,
-              dataset_name: dataset.dataset_name,
-              dataset_file: dataset.dataset_file,
-              dataset_gene_count: dataset.dataset_gene_count,
-              dataset_public_flag: dataset.dataset_public_flag ? 'Yes' : 'No', // Convert boolean to display-friendly value
-              dataset_creation_timestamp: new Date(dataset.dataset_creation_timestamp).toLocaleString(), // Format timestamp
+              dataset_name: dataset.h5ad_dataset_name || dataset.rds_dataset_name || dataset.tenxfbcm_dataset_name,
+              dataset_type: dataset.h5ad_dataset_file_extension || dataset.rds_dataset_file_extension || '10x',
+              dataset_organism: dataset.h5ad_dataset_organism || dataset.rds_dataset_organism || dataset.tenxfbcm_dataset_organism, 
+              dataset_public_flag: (dataset.h5ad_dataset_public_flag || dataset.rds_dataset_public_flag || dataset.tenxfbcm_dataset_public_flag) ? 'Yes' : 'No',
+              dataset_creation_timestamp: new Date(dataset.h5ad_dataset_creation_timestamp || dataset.rds_dataset_creation_timestamp || dataset.tenxfbcm_dataset_creation_timestamp).toLocaleString(),
+              dataset_upload_user: dataset.h5ad_dataset_upload_user || dataset.rds_dataset_upload_user || dataset.tenxfbcm_dataset_upload_user,
+            }))
+            .filter((dataset) => dataset.dataset_upload_user !== 1)
+            .filter((dataset) => dataset.dataset_organism === selectedModel) // Filter by selected organism
+            .map((dataset) => ({
+              ...dataset,
+              dataset_organism: datasetMapping[dataset.dataset_organism] || "Unknown", // Map number to name after filtering
             }));
-            setDatasets(formattedDatasets);  // Set the formatted datasets to state
-          //  setRefreshKey((prevKey) => prevKey + 1);
-          } else {
-            console.error('Error fetching datasets:', data.error);
-          }
+  
+          setDatasets(formattedDatasets); // Set the formatted datasets to state
           setLoading(false);
-        })
-        .catch((error) => {
+  
+        } catch (error) {
           console.error('Error fetching datasets:', error);
           setLoading(false);
-        });
+        }
+      };
+  
+      // Call the fetchData function
+      fetchData();
     } else {
       console.error('User or CSRF token not found');
       setLoading(false);
     }
-  }, [user, csrfToken, refreshTrigger]);
+  }, [user, csrfToken, refreshTrigger, selectedModel]); // Add selectedModel to the dependency array if needed
+  
 
   if (loading) {
     return <CircularProgress />;
   }
 
   if (!datasets.length) {
-    return <p>No datasets available for this user.</p>;
+    return <p>No datasets available for this user (Select an <Link to="/organism" style={{ color: 'blue', textDecoration: 'none' }}>Organism</Link> to view your datasets).</p>;
   }
 
   const columns = [
     { field: 'dataset_name', headerName: 'Dataset Name', flex: 1 },
-    // { field: 'dataset_gene_count', headerName: 'Gene Count', flex: 0.5 },
-    { field: 'dataset_public_flag', headerName: 'Public', flex: 0.5 },
+    { field: 'dataset_organism', headerName: 'Organism', flex: 0.75 },
+    { field: 'dataset_type', headerName: 'Dataset Type', flex: 0.5 },
+    { field: 'dataset_public_flag', headerName: 'Public', flex: 0.25 },
     { field: 'dataset_creation_timestamp', headerName: 'Creation Date', flex: 1 },
   ];
 
@@ -106,15 +155,9 @@ export default function PrivateData({ onDatasetSelect, refreshTrigger }) {
                
                 if (selectedDataset) {
                   setRowSelectionModel(selectedId);
-                  onDatasetSelect({ id: selectedId, name: selectedDataset.dataset_name, geneCountNumber: selectedDataset.dataset_gene_count }); // Pass both ID and name
+                  onDatasetSelect({ id: selectedId, name:selectedDataset.dataset_name, type: selectedDataset.dataset_type }); // Pass both ID and name
                 }
               } 
-              // const singleSelection = newRowSelectionModel.slice(-1); // Keep only the last selected row
-              // setRowSelectionModel(singleSelection);
-              // onDatasetSelect(singleSelection);
-              // setRowSelectionModel(newRowSelectionModel);
-              // const selectedDatasetIds = newRowSelectionModel.map((id) => id);
-              // onDatasetSelect(selectedDatasetIds);
             }}
             rowsPerPageOptions={[5, 10, 20]}
             autoHeight

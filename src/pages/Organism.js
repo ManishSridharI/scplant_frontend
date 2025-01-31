@@ -11,7 +11,7 @@ import { Typography } from '@mui/material';
 import Models from '../components/Models';
 
 export default function Organism(props) {
-    const [geneCountNumber, setGeneCountNumber] = React.useState(20000);
+  
   const navigate = useNavigate();
 
   const [selectedModel, setSelectedModel] = React.useState(null);
@@ -20,19 +20,22 @@ export default function Organism(props) {
   };
 
   const handleDatasetSubmit = () => {
-    let updatedGeneCount = geneCountNumber;
-    if (selectedModel===2){
-        updatedGeneCount =10000;
-      };
-
   setTimeout(() => {
   
     console.log('Selected model:',selectedModel);
-    console.log('Gene Count:',updatedGeneCount);
     
-    navigate('/dataset', { state: { selectedModel, geneCountNumber: updatedGeneCount } });
+    navigate('/dataset', { state: { selectedModel } });
   }, 500); // Simulate API response time
   };
+
+  const handleOrgSubmitCompare = () => {
+    setTimeout(() => {
+    
+      console.log('Selected model:',selectedModel);
+      
+      navigate('/compare', { state: { selectedModel } });
+    }, 500); // Simulate API response time
+    };
 
   return (
     <div>
@@ -40,10 +43,12 @@ export default function Organism(props) {
       <Box
       sx={{
         display: 'flex',
+        flexDirection: 'row',
         justifyContent: 'center', // Align horizontally to center
         alignItems: 'center',    // Align vertically if needed
         mt: 2,
         mb: 2,
+        gap:2,
       }}
     >
       <Button
@@ -57,6 +62,17 @@ export default function Organism(props) {
         }}
       >
         Proceed to Datasets
+      </Button>
+      <Button
+        variant="contained"
+        color={(selectedModel) ? "primary" : "inherit"} // Lighter color when no file or link
+          onClick={(selectedModel) ? handleOrgSubmitCompare : null} // Disable click when no file or link
+        sx={{
+          backgroundColor: (selectedModel) ? '' : 'grey.300', // Lighter background when disabled
+          cursor: (selectedModel) ? 'pointer' : 'not-allowed', // Change cursor to 'not-allowed' if disabled
+        }}
+      >
+        Proceed to Compare Predictions
       </Button>
       </Box>
 

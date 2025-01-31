@@ -17,10 +17,10 @@ export default function Dataset(props) {
   const [selectedPublicDataset, setSelectedPublicDataset] = React.useState(null);
   const [selectedPrivateDataset, setSelectedPrivateDataset] = React.useState(null);
   const [selectedDatasetName, setSelectedDatasetName] = React.useState(null);
-  const [fileExtension, setfileExtension] = React.useState('h5ad');
+  const [selectedDatasetType, setSelectedDatasetType] = React.useState(null);
   const [refreshTrigger, setRefreshTrigger] = React.useState(0);
   const { selectedModel } = location.state || {};
-  const { geneCountNumber } = location.state || {};
+
   const navigate = useNavigate();
 
   console.log('selectedModel:', selectedModel);
@@ -38,23 +38,17 @@ export default function Dataset(props) {
   const handlePublicDatasetClick = (selectedDatasets) => {
     setSelectedPublicDataset((selectedDatasets.id));
     setSelectedDatasetName(selectedDatasets.name);
+    setSelectedDatasetType(selectedDatasets.type);
     console.log('Selected public dataset:', selectedDatasets);
   };
 
   const handlePrivateDatasetSelect = (selectedDatasets) => {
     setSelectedPrivateDataset(selectedDatasets.id);
     setSelectedDatasetName(selectedDatasets.name);
+    setSelectedDatasetType(selectedDatasets.type);
     console.log('Selected private dataset:', selectedDatasets);
   };
 
-  const handleFileUploadExtension = (fileExt) => {
-    setfileExtension(fileExt);
-//     console.log("Before update, refreshTrigger:", refreshTrigger);
-// setRefreshTrigger(prev => prev + 1);
-// console.log("After update, refreshTrigger:", refreshTrigger);
-    console.log('fileExtension:', fileExt);
-  };
-  console.log('fileExtensionfileExtension:', fileExtension);
   const handleDatasetSubmit = () => {
 
     let datasetIds;
@@ -98,78 +92,21 @@ export default function Dataset(props) {
 
       const datasetId = datasetIds;
 
-
-
-      const commonData = {
-        job_dataset: datasetId,
+      let url = '/api/jobs/api/job_annotate_and_plot/';
+      let requestData = {
         job_predictor: selectedModel,
-        dataset_name: selectedDatasetName,
-        data_type: fileExtension,
-        gene_number: geneCountNumber, // Single input field
+        job_name: selectedDatasetName + "_annotate&plot",
+        job_script: 2,
+        job_annotate_and_plot_stdout_filename: "Stdout001",
+        job_annotate_and_plot_stderr_filename: "Stderr001",
       };
 
+      if (selectedDatasetType === 'h5ad') {
+        requestData.job_h5ad_dataset = datasetId;
+      } else if (selectedDatasetType === '10x') {
+        requestData.job_tenxfbcm_dataset = datasetId;
+      }
 
-      let url = '';
-      let requestData = {};
-      let selectedScript= 2;
-    switch (parseInt(selectedScript, 10)) {
-      case 1:
-        url = '/api/jobs/api/job_inference/';
-        requestData = {
-          job_dataset: commonData.job_dataset,
-          job_predictor: commonData.job_predictor,
-          job_name: commonData.dataset_name + "_inference",
-          job_inference_data_type: commonData.data_type,
-          job_script: 1,
-          job_inference_gene_number: commonData.gene_number,
-          job_inference_log_filename: "Log001",
-          job_inference_prediction_filename: "Prediction001",
-          job_inference_stats_filename: "Stat001",
-          job_inference_stdout_filename: "Stdout001",
-          job_inference_stderr_filename: "Stderr001",
-        };
-        break;
-      case 2:
-        url = '/api/jobs/api/job_annotate_and_plot/';
-        requestData = {
-          job_dataset: commonData.job_dataset,
-          job_predictor: commonData.job_predictor,
-          job_name: commonData.dataset_name + "_annotate&plot",
-          job_annotate_and_plot_data_type: commonData.data_type,
-          job_script: 2,
-          job_annotate_and_plot_gene_number: commonData.gene_number,
-          job_annotate_and_plot_log_filename: "Log001",
-          job_annotate_and_plot_stdout_filename: "Stdout001",
-          job_annotate_and_plot_stderr_filename: "Stderr001",
-        };
-        break;
-      case 3:
-        url = '/api/jobs/api/job_treatment_vs_control/';
-        requestData = {
-          job_control_dataset: commonData.job_dataset,
-          job_name: commonData.job_name,
-          job_script: 3,
-          job_control_stdout_filename: "Stdout001",
-          job_control_stderr_filename: "Stderr001",
-        };
-        break;
-      case 4:
-        url = '/api/jobs/api/job_compare/';
-        requestData = {
-          job_dataset: commonData.job_dataset,
-          job_predictor: commonData.job_predictor,
-          job_name: commonData.job_name,
-          job_compare_gene_number: commonData.gene_number,
-          job_script: 4,
-          job_compare_log_filename: "Log001",
-          job_compare_stdout_filename: "Stdout001",
-          job_compare_stderr_filename: "Stderr001",
-        };
-        break;
-      default:
-        alert('Invalid script ID selected.');
-        return;
-    }
 
     console.log(requestData);
 
@@ -261,16 +198,11 @@ export default function Dataset(props) {
       {view === 'public' && <Data onDatasetClick={handlePublicDatasetClick} />}
       {view === 'private' && (
           <>
-            <Upload onDatasetUpload={handleFileUploadExtension} onDatasetUploadRefresh={() => setRefreshTrigger(prev => prev + 1)}/>
-            <PrivateData onDatasetSelect={handlePrivateDatasetSelect} refreshTrigger={refreshTrigger} />
+            <Upload selectedModel={selectedModel} onDatasetUploadRefresh={() => setRefreshTrigger(prev => prev + 1)}/>
+            <PrivateData selectedModel={selectedModel} onDatasetSelect={handlePrivateDatasetSelect} refreshTrigger={refreshTrigger} />
           </>
         )}
         </Box>
-      {/* <Data onDatasetClick={handlePublicDatasetClick} />
-      <Divider />
-      <Upload />
-      <Divider />
-      <PrivateData onDatasetSelect={handlePrivateDatasetSelect} /> */}
       <Box
       sx={{
         display: 'flex',

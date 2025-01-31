@@ -25,23 +25,10 @@ export default function Results(props) {
       }
       try {
         const urls = [
-          '/api/jobs/api/job_inference_query/',
           '/api/jobs/api/job_annotate_and_plot_query/',
           '/api/jobs/api/job_treatment_vs_control_query/',
-          '/api/jobs/api/job_compare_cell_type_dist_query/',
+          '/api/jobs/api/job_convert_rds_to_h5ad_query/',          
         ];
-        // const response = await fetch('http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_query/', {
-        //   method: 'GET',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'X-CSRFToken': csrfToken,              // Include CSRF token
-        //   },
-        //   credentials: 'include', // Ensure cookies are sent with the request
-        // });
-  
-        // if (!response.ok) {
-        //   throw new Error(`HTTP error! status: ${response.status}`);
-        // }
 
         const responses = await Promise.all(
           urls.map((url) =>
@@ -63,18 +50,9 @@ export default function Results(props) {
         });
 
         const data = await Promise.all(responses.map((response) => response.json()))
-  
         // Extract and format data from each API
-        const jobInferenceData = data[0]?.JobInference?.map((job, index) => ({
-          type: `Inference`, 
-          id: `Inference-${job.id}`,
-          testName: job.job_name,
-          status: job.job_celery_task_status,
-          creationTime: new Date(job.job_creation_timestamp).toLocaleString(),
-          filesId: job.job_inference_file_output,
-        })) || [];
 
-        const annotateandplotData = data[1]?.JobAnnotateAndPlot?.map((job, index) => ({
+        const annotateandplotData = data[0]?.JobAnnotateAndPlot?.map((job, index) => ({
           type: `Annotate and Plot`, 
           id: `Annotate and Plot-${job.id}`,
           testName: job.job_name,
@@ -82,8 +60,9 @@ export default function Results(props) {
           creationTime: new Date(job.job_creation_timestamp).toLocaleString(),
           filesId: job.job_annotate_and_plot_file_output,
         })) || [];
+        console.log(annotateandplotData);
 
-        const controlVsConditionData = data[2]?.JobTreatmentVsControl?.map((job, index) => ({
+        const TreatmentVsControl = data[1]?.JobTreatmentVsControl?.map((job, index) => ({
           type: `Treatment vs Control`, 
           id: `Treatment vs Control-${job.id}`,
           testName: job.job_name,
@@ -92,9 +71,9 @@ export default function Results(props) {
           filesId: job.job_treatment_vs_control_file_output,
         })) || [];
 
-        const comparePlotData = data[3]?.JobCompareCellTypeDist?.map((job,index) => ({
-          type: `Compare Cell Type Distribution`, 
-          id: `Compare Cell Type Distribution-${job.id}`,
+        const rdsToh5ad = data[2]?.JobConvertRdsToH5ad?.map((job,index) => ({
+          type: `rds to h5ad`, 
+          id: `rds to h5ad-${job.id}`,
           testName: job.job_name,
           status: job.job_celery_task_status,
           creationTime: new Date(job.job_creation_timestamp).toLocaleString(),
@@ -102,21 +81,11 @@ export default function Results(props) {
         })) || [];
 
         const combinedData = [
-          ...jobInferenceData,
           ...annotateandplotData,
-          ...controlVsConditionData,
-          ...comparePlotData,
+          ...TreatmentVsControl,
+          ...rdsToh5ad,
         ];      
         
-        // const data = await response.json();
-        // const formattedData = data.JobInference.map((job) => ({
-        //   id: job.id,
-        //   testName: job.job_name,
-        //   status: job.job_celery_task_status, // Adjust based on your logic
-        //   creationTime: new Date(job.job_creation_timestamp).toLocaleString(),
-        //   files_id: job.job_inference_file_output_id,
-         
-        // }));
         setRows(combinedData);
         setLoading(false);
       } catch (error) {
@@ -146,27 +115,22 @@ const handleDownload = (row) => {
     let fileKeys = {};
     let rootKey = "";
     switch (type) {
-      case "Inference":
-        endpoint = `/api/jobs/api/job_inference_file_output_query_by_id/`;
-        payload = { job_inference_file_output_id: filesId };
-        fileKeys = {
-          prediction: "job_inference_prediction_file",
-          stats: "job_inference_stats_file",
-          stderr: "job_inference_stderr_file",
-        };
-        rootKey = "JobInferenceFileOutput";
-        break;
       case "Annotate and Plot":
         endpoint = `/api/jobs/api/job_annotate_and_plot_file_output_query_by_id/`;
         payload = { job_annotate_and_plot_file_output_id: filesId };
         fileKeys = {
+          prediction: "job_annotate_and_plot_prediction_file",
+          stats: "job_annotate_and_plot_stats_csv_file",
+          stats_plot: "job_annotate_and_plot_stats_csv_file",
           top25: "job_annotate_and_plot_top25_markers_file",
           marker_genes: "job_annotate_and_plot_marker_genes_file",
-          // celltype: "job_annotate_and_plot_output_with_celltype_file",
-          prediction: "job_annotate_and_plot_prediction_file",
           annotate_tsne: "job_annotate_and_plot_annotate_tsne_file",
           annotate_umap: "job_annotate_and_plot_annotate_umap_file",
           top3: "job_annotate_and_plot_top3_genes_dotplot_file",
+          all_markers: 'job_annotate_and_plot_all_markers_file',
+          top5_markers: 'job_annotate_and_plot_top5_markers_file',
+          top10_markers: 'job_annotate_and_plot_top10_markers_file',
+          top25_markers: 'job_annotate_and_plot_top25_markers_file',
           stderr: "job_annotate_and_plot_stderr_file",
         };
         rootKey = "JobAnnotateAndPlotFileOutput";
@@ -175,26 +139,37 @@ const handleDownload = (row) => {
         endpoint = `/api/jobs/api/job_treatment_vs_control_file_output_query_by_id/`;
         payload = { job_treatment_vs_control_file_output_id: filesId };
         fileKeys = {
-          cond1_marker: "job_treatment_vs_control_condition1_marker_genes_file",
-          cond1_top25: "job_treatment_vs_control_condition1_top25_markers_file",
-          cond1_top10_dot: "job_treatment_vs_control_condition1_top10_genes_dotplot_file",
-          cond2_marker: "job_treatment_vs_control_condition2_marker_genes_file",
-          cond2_top25: "job_treatment_vs_control_condition2_top25_markers_file",
-          cond2_top10_dot: "job_treatment_vs_control_condition2_top10_genes_dotplot_file",
-          t_vs_ctrl_ctrl_vs_con: "job_treatment_vs_control_control_vs_conditions_markers_file",
-          t_vs_ctrl_con_vs_ctrl: "job_treatment_vs_control_conditions_vs_control_markers_file",
-          stderr: "job_annotate_and_plot_stderr_file",
+          comp_celltype_dist: "job_treatment_vs_control_comp_celltype_dist_file",
+          control_vs_conditions_markers: "job_treatment_vs_control_control_vs_conditions_markers_file",
+          conditions_vs_control_markers: "job_treatment_vs_control_conditions_vs_control_markers_file",
+          ctrl_vs_cond1_cond1_all_DEGs: "job_treatment_vs_control_ctrl_vs_cond1_cond1_all_DEGs_file",
+          ctrl_vs_cond1_cond1_top10_DEGs: "job_treatment_vs_control_ctrl_vs_cond1_cond1_top10_DEGs_file",
+          ctrl_vs_cond1_cond1_top25_DEGs: "job_treatment_vs_control_ctrl_vs_cond1_cond1_top25_DEGs_file",
+          ctrl_vs_cond1_cond1_top5_DEGs: "job_treatment_vs_control_ctrl_vs_cond1_cond1_top5_DEGs_file",
+          ctrl_vs_cond1_ctrl_all_DEGs: "job_treatment_vs_control_ctrl_vs_cond1_ctrl_all_DEGs_file",
+          ctrl_vs_cond1_ctrl_top10_DEGs: "job_treatment_vs_control_ctrl_vs_cond1_ctrl_top10_DEGs_file",
+          ctrl_vs_cond1_ctrl_top25_DEGs: "job_treatment_vs_control_ctrl_vs_cond1_ctrl_top25_DEGs_file",
+          ctrl_vs_cond1_ctrl_top5_DEGs: "job_treatment_vs_control_ctrl_vs_cond1_ctrl_top5_DEGs_file",
+          ctrl_vs_cond2_cond2_all_DEGs: "job_treatment_vs_control_ctrl_vs_cond2_cond2_all_DEGs_file", 
+          ctrl_vs_cond2_cond2_top10_DEGs: "job_treatment_vs_control_ctrl_vs_cond2_cond2_top10_DEGs_file", 
+          ctrl_vs_cond2_cond2_top25_DEGs: "job_treatment_vs_control_ctrl_vs_cond2_cond2_top25_DEGs_file", 
+          ctrl_vs_cond2_cond2_top5_DEGs: "job_treatment_vs_control_ctrl_vs_cond2_cond2_top5_DEGs_file", 
+          ctrl_vs_cond2_ctrl_all_DEGs: "job_treatment_vs_control_ctrl_vs_cond2_ctrl_all_DEGs_file", 
+          ctrl_vs_cond2_ctrl_top10_DEGs: "job_treatment_vs_control_ctrl_vs_cond2_ctrl_top10_DEGs_file", 
+          ctrl_vs_cond2_ctrl_top25_DEGs: "job_treatment_vs_control_ctrl_vs_cond2_ctrl_top25_DEGs_file", 
+          ctrl_vs_cond2_ctrl_top5_DEGs: "job_treatment_vs_control_ctrl_vs_cond2_ctrl_top5_DEGs_file", 
+          stderr: "job_treatment_vs_control_stderr_file",
         };
         rootKey = "JobTreatmentVsControlFileOutput";
         break;
-        case "Compare Cell Type Distribution":
-          endpoint = `/api/jobs/api/job_compare_cell_type_dist_file_output_query_by_id/`;
-          payload = { job_compare_cell_type_dist_file_output_id: filesId };
+        case "rds to h5ad":
+          endpoint = `/api/jobs/api/job_convert_rds_to_h5ad_file_output_query_by_id/`;
+          payload = { job_convert_rds_to_h5ad_file_output_id: filesId };
           fileKeys = {
-            compare_output: "job_compare_cell_type_dist_output_file",
+            compare_output: "job_convert_rds_to_h5ad_file",
             stderr: "job_annotate_and_plot_stderr_file",
           };
-          rootKey = "JobCompareCellTypeDistFileOutput";
+          rootKey = "JobConvertRdsToH5adFileOutput";
           break;
       default:
         alert(`Unsupported job type: ${type}`);
@@ -226,13 +201,6 @@ const handleDownload = (row) => {
         setLoading(false);
         return;
       }
-      // URLs to fetch the files (assume they are hosted on the server)
-      // const fileUrls = {  
-      //   prediction: `http://digbio-g2pdeep.rnet.missouri.edu:8449${data.JobInferenceFileOutput.job_inference_prediction_file}`,
-      //   stderr: `http://digbio-g2pdeep.rnet.missouri.edu:8449${data.JobInferenceFileOutput.job_inference_stderr_file}`,
-      // };
-     // console.log(fileUrls);
-      // Combine files into a ZIP
 
       for (const [key, value] of Object.entries(fileKeys)) {
         if (responseRoot[value]) {
@@ -241,16 +209,6 @@ const handleDownload = (row) => {
       }
 
       const zip = new JSZip();
-      // for (const [key, url] of Object.entries(fileUrls)) {
-      //   const fileResponse = await fetch(url);
-      //   if (!fileResponse.ok) {
-      //     console.warn(`Failed to fetch ${key} file`);
-      //     continue;
-      //   }
-      //   const fileBlob = await fileResponse.blob();
-      //   const fileName = url.split('/').pop()
-      //   zip.file(fileName, fileBlob);
-      // }
 
       for (const [key, url] of Object.entries(fileUrls)) {
         if (!url) continue; // Skip missing files

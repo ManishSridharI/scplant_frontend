@@ -9,18 +9,21 @@ import { Grid2 } from '@mui/material';
 import { useAuth } from '../Auth';
 import { useNavigate } from 'react-router-dom';
 import { FormControlLabel, Switch } from '@mui/material';
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
 
-export default function Upload({ onDatasetUpload, onDatasetUploadRefresh }) {
+export default function Upload({ selectedModel, onDatasetUploadRefresh }) {
   const { user, csrfToken } = useAuth(); 
   const navigate = useNavigate(); 
   const [file, setFile] = useState(null);
-  const [driveLink, setDriveLink] = useState('');
   const [datasetName, setDatasetName] = useState('');
   const [DescriptionFlag, setDescriptionFlag] = useState(0);
-  const [description, setDescription] = useState('');
   const [errorMessage, setErrorMessage] = useState(''); 
   const [fileExtension, setfileExtension] =useState('');
-  const [geneCount, setGeneCount] = useState(0);
+  const [fileType, setFileType] = useState("h5ad");
+  const [files, setFiles] = useState([]);
 
   const handleDatasetNameChange = (event) => {
     setDatasetName(event.target.value);
@@ -29,77 +32,64 @@ export default function Upload({ onDatasetUpload, onDatasetUploadRefresh }) {
   const handleDescriptionChange = (event) => {
     const isPublic = event.target.checked;
     setDescriptionFlag(isPublic ? 1 : 0); // Store flag as 1 for 'yes' and 0 for 'no'
-    setDescription(isPublic ? 'Yes' : 'No'); // Store textual representation
   };
 
-  // const handleDescriptionChange = (event) => {
-  //   const input = event.target.value.toLowerCase().trim();
-  
-  //   // Determine if input is 'yes' or 'no', and set flag accordingly
-  //   const descriptionFlag = input === 'yes' ? 1 : input === 'no' ? 0 : null;
-  
-  //   // If input is valid (yes or no), set description flag
-  //   if (descriptionFlag !== null) {
-  //     setDescriptionFlag(descriptionFlag);  // Store the flag (1 for 'yes' and 0 for 'no')
-  //   } else {
-  //     console.error('Invalid input. Please enter "yes" or "no".');
-  //   }
-    
-  //   // Update the description text
-  //   setDescription(event.target.value);
-  // };
-
-  const handleGeneCount = (event) => {
-    const input = event.target.value;
-  
-    // Determine if input is 'yes' or 'no', and set flag accordingly
-    const geneCount = input;
-  
-    // If input is valid (yes or no), set description flag
-    if (geneCount !== null) {
-      setGeneCount(geneCount);  // Store the flag (1 for 'yes' and 0 for 'no')
-    } else {
-      console.error('Enter gene Count.');
-    }
-    
-    // Update the description text
-    setGeneCount(event.target.value);
+  const handleFileTypeChange = (event) => {
+    setFileType(event.target.value);
+    setFiles([]); // Reset files when type changes
   };
 
   const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
+    const selectedFiles = Array.from(event.target.files);
+    if (fileType === "h5ad") {
+      if (selectedFiles.length > 1 || !selectedFiles[0].name.match(/\.(h5ad)$/)) {
+        alert("Please upload a single .h5ad file");
+        return;
+      }
+    } 
+    else if (fileType === "rds") {
+      if (selectedFiles.length > 1 || !selectedFiles[0].name.match(/\.(rds)$/)) {
+        alert("Please upload a single .rds file");
+        return;
+      }
+    }
+    else if (fileType === "10x") {
+      if (selectedFiles.length !== 3 ||
+          !selectedFiles.some(f => f.name.includes("barcodes")) ||
+          !selectedFiles.some(f => f.name.includes("features")) ||
+          !selectedFiles.some(f => f.name.includes("matrix")) ||
+          !selectedFiles.every(f => f.name.endsWith(".gz"))) {
+        alert("Please upload exactly 3 .gz files containing 'barcodes', 'features', and 'matrix' in their names");
+        return;
+      }
+    }
+    setFiles(selectedFiles);
+  };
 
-    if (selectedFile) {
-      const fileName = selectedFile.name;
-      const fileExt = fileName.split('.').pop(); // Extract file extension
-      setfileExtension(fileExt)
-      console.log('File Extension:', fileExt);
-      onDatasetUpload(fileExt);
-    }
-      setErrorMessage(''); // Clear any previous error
-      setFile(selectedFile); // Set file if size is valid
+  // const handleFileChange = (event) => {
+  //   const selectedFile = event.target.files[0];
+
+  //   if (selectedFile) {
+  //     const fileName = selectedFile.name;
+  //     const fileExt = fileName.split('.').pop(); // Extract file extension
+  //     setfileExtension(fileExt)
+  //     console.log('File Extension:', fileExt);
+  //     onDatasetUpload(fileExt);
+  //   }
+  //     setErrorMessage(''); // Clear any previous error
+  //     setFile(selectedFile); // Set file if size is valid
   
-    // if (selectedFile && selectedFile.size > 25 * 1024 * 1024) { // File size check for >25MB
-    //   setErrorMessage('File size exceeds 25MB. Please provide a drive link.');
-    //   setFile(null); // Reset file input
-    // } else {
-    //   setErrorMessage(''); // Clear any previous error
-    //   setFile(selectedFile); // Set file if size is valid
+  //   // if (selectedFile && selectedFile.size > 25 * 1024 * 1024) { // File size check for >25MB
+  //   //   setErrorMessage('File size exceeds 25MB. Please provide a drive link.');
+  //   //   setFile(null); // Reset file input
+  //   // } else {
+  //   //   setErrorMessage(''); // Clear any previous error
+  //   //   setFile(selectedFile); // Set file if size is valid
       
-    // }
-  };
-  console.log(fileExtension);
+  //   // }
+  // };
+  // console.log(fileExtension);
  
-  const handleLinkChange = (event) => {
-    const value = event.target.value;
-    // Check if the link starts with https
-    if (value && !value.startsWith('https://')) {
-      setErrorMessage('Please provide a valid HTTPS link.');
-    } else {
-      setErrorMessage('');
-    }
-    setDriveLink(value);
-  };
   
   const handleUpload = () => {
     if (!user) {
@@ -107,24 +97,40 @@ export default function Upload({ onDatasetUpload, onDatasetUploadRefresh }) {
       navigate('/signin'); // Redirect to sign-in page
       return;
     }
-    if (file && user) {
+    if (files.length > 0 && user) {
       const formData = new FormData();
-      formData.append('dataset_file', file);
-      formData.append('dataset_name', datasetName);
-      formData.append('dataset_public_flag', DescriptionFlag);
-      formData.append('dataset_file_extension', fileExtension);
+      if (fileType === "h5ad") {
+        formData.append("h5ad_dataset_file", files[0]);
+        formData.append("h5ad_dataset_name", datasetName);
+        formData.append("h5ad_dataset_file_extension", "h5ad");
+        formData.append("h5ad_dataset_organism", selectedModel);
+        formData.append("h5ad_dataset_public_flag", DescriptionFlag);
+      } else if (fileType === "rds") {
+        formData.append("rds_dataset_file", files[0]);
+        formData.append("rds_dataset_name", datasetName);
+        formData.append("rds_dataset_file_extension", "rds");
+        formData.append("rds_dataset_organism", selectedModel);
+        formData.append("rds_dataset_public_flag", DescriptionFlag);
+      } else if (fileType === "10x") {
+        formData.append("tenxfbcm_barcode_dataset_file", files.find(f => f.name.includes("barcode")));
+        formData.append("tenxfbcm_feature_dataset_file", files.find(f => f.name.includes("feature")));
+        formData.append("tenxfbcm_matrix_dataset_file", files.find(f => f.name.includes("matrix")));
+        formData.append("tenxfbcm_dataset_name", datasetName);
+        formData.append("tenxfbcm_barcode_dataset_file_extension", "gz");
+        formData.append("tenxfbcm_feature_dataset_file_extension", "gz");
+        formData.append("tenxfbcm_matrix_dataset_file_extension", "gz");
+        formData.append("tenxfbcm_dataset_organism", selectedModel);
+        formData.append("tenxfbcm_dataset_public_flag", DescriptionFlag);
+      }
       //formData.append('user_id', user.id);
       console.log('FormData after append:', Array.from(formData.entries())); 
-      fetch('/api/datasets/api/dataset_upload/', { // Ensure the URL matches your backend's endpoint
+      fetch(fileType === "h5ad" ? '/api/h5addatasets/api/h5ad_dataset_upload/' : fileType === "rds" ? "/api/rdsdatasets/api/rds_dataset_upload/" : "/api/tenxfeaturebcmatrixdatasets/api/tenxfbcm_dataset_upload/", { // Ensure the URL matches your backend's endpoint
         method: 'POST',
         headers: {
-          
-          'X-CSRFToken': csrfToken,  // Set CSRF token in the header
-         
+          'X-CSRFToken': csrfToken,  // Set CSRF token in the header 
         },
         credentials: 'include', 
         body: formData,
-        
       })
         .then((response) => response.json())
         .then((data) => {
@@ -133,18 +139,12 @@ export default function Upload({ onDatasetUpload, onDatasetUploadRefresh }) {
           } else {
             console.log('File uploaded successfully:');
             onDatasetUploadRefresh();
-            // setRefreshKey((prevKey) => prevKey + 1);
           }
         })
         .catch((error) => {
           setErrorMessage('Error uploading file.');
           console.error(error);
         });
-    }
-  
-    if (driveLink) {
-      console.log('Drive link provided:', driveLink);
-      // Add logic to handle drive link submission
     }
   };
   
@@ -196,15 +196,17 @@ export default function Upload({ onDatasetUpload, onDatasetUploadRefresh }) {
         <Typography variant="body"  sx={{fontSize: '0.9rem'}}>
         Click here to download <a href="/corn_test.h5ad" download style={{ textDecoration: 'none', color: 'blue' }}> Example </a> file 
       </Typography>
-        {/* <TextField
-            label="Enter Gene Count"
-            variant="outlined"
-            fullWidth
-            value={geneCount}
-            onChange={handleGeneCount}
-            required
-          /> */}
           </Grid2>
+        <Grid2 item xs={12} sm={6}>
+        <FormControl fullWidth>
+          <InputLabel>File Type</InputLabel>
+          <Select value={fileType} onChange={handleFileTypeChange}>
+            <MenuItem value="h5ad">h5ad</MenuItem>
+            <MenuItem value="rds">rds</MenuItem>
+            <MenuItem value="10x">10x</MenuItem>
+          </Select>
+        </FormControl>
+      </Grid2>
         <Grid2 item xs={12} sm={6}>
         <FormControlLabel
           control={
@@ -216,20 +218,13 @@ export default function Upload({ onDatasetUpload, onDatasetUploadRefresh }) {
           }
           label="Do you want to make your dataset public?"
         />
-          {/* <TextField
-            label="Public (Yes/No)"
-            variant="outlined"
-            fullWidth
-            value={description}
-            onChange={handleDescriptionChange}
-            required
-          /> */}
         </Grid2>
       </Grid2>
         <input
-          accept=".h5ad, .rds, .10x" 
+          accept={fileType === "10x" ? ".gz" : ".h5ad, .rds"}
           id="file-upload"
           type="file"
+          multiple={fileType === "10x"}
           onChange={handleFileChange}
           style={{ display: 'none' }}
         />
@@ -238,42 +233,27 @@ export default function Upload({ onDatasetUpload, onDatasetUploadRefresh }) {
             Choose File
           </Button>
         </label>
-        {file && <Typography>{file.name}</Typography>}
+        {files.length > 0 && files.map((file, index) => (
+          <Typography key={index}>{file.name}</Typography>
+        ))}
         <Typography variant="body2" sx={{ color: 'grey.600' }}>
           We support .h5ad, .rds and 10x files
         </Typography>
         <Typography variant="body2" sx={{ color: 'grey.600', fontStyle: 'italic' }}>
           *Please upload the files similar to the example dataset to run your preidctions successfully
         </Typography>
-        {/* <Typography variant="body2" sx={{ color: 'grey.600', fontStyle: 'italic' }}>
-          *Make sure to match the gene count number above to run your predictions successfully
-        </Typography> */}
-        {/* Display error message if file is larger than 25MB */}
-        
-        {/* <Typography sx={{mt:1}} variant="h6" component="h6" gutterBottom>
-       Or
-      </Typography>
-        <TextField
-          label="Drive Link"
-          variant="outlined"
-          fullWidth
-          value={driveLink}
-          onChange={handleLinkChange}
-          helperText="Provide drive link if the file is larger than 25MB"
-        /> */}
-
-     
+          
 
 {errorMessage && <Typography color="error">{errorMessage}</Typography>}
         <Button
           variant="contained"
-          color={(file || driveLink) && datasetName  ? "primary" : "inherit"} // Lighter color when no file or link
-          onClick={(file || driveLink) && datasetName ? handleUpload : null} // Disable click when no file or link
+          color={(files.length > 0)  && datasetName  ? "primary" : "inherit"} // Lighter color when no file or link
+          onClick={(files.length > 0)  && datasetName ? handleUpload : null} // Disable click when no file or link
           fullWidth
           sx={{
             mt:2,
-            backgroundColor: (file || driveLink) && datasetName  ? '' : 'grey.300', // Lighter background when disabled
-            cursor: (file || driveLink) && datasetName ? 'pointer' : 'not-allowed', // Change cursor to 'not-allowed' if disabled
+            backgroundColor: (files.length > 0)  && datasetName  ? '' : 'grey.300', // Lighter background when disabled
+            cursor: (files.length > 0) && datasetName ? 'pointer' : 'not-allowed', // Change cursor to 'not-allowed' if disabled
           }}
         >
           Upload

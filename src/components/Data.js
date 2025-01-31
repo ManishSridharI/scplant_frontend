@@ -81,12 +81,9 @@ const items = [
 export default function Data({ onDatasetClick }) {
   const [selectedId, setSelectedId] = React.useState(null);
 
-  const handleDatasetClick = (datasetId, datasetName, geneCountNumber) => {
-    onDatasetClick({ id: datasetId, name: datasetName, geneCountNumber: geneCountNumber});
+  const handleDatasetClick = (datasetId, datasetName) => {
+    onDatasetClick({ id: datasetId, name: datasetName, type: 'h5ad'});
     setSelectedId(datasetId); // Update the selected ID
-    // if (onDatasetClick) {
-    //   onDatasetClick(datasetId); // Trigger the parent handler if provided
-    // }
   };
   return (
     <Box
@@ -134,7 +131,7 @@ export default function Data({ onDatasetClick }) {
               }}
              // onClick={() => console.log(`${item.title} button clicked!`)} // You can add your actual click handler here
               //onClick={() => onDatasetClick(item.dataset_info_id)}
-              onClick={() => handleDatasetClick(item.dataset_info_id,item.title,item.dataset_gene_count)}
+              onClick={() => handleDatasetClick(item.dataset_info_id,item.title)}
             >
               <Stack
                 direction="column"

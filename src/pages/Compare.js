@@ -10,11 +10,13 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import DatasetComparison from '../components/DatasetComparison';
 import PredictionComparison from '../components/PredictionComparison';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function Compare(props) {
   const { user, csrfToken } = useAuth();
   const [view, setView] = React.useState(''); // State to track which view to display
-  
+  const location = useLocation();
+  const { selectedModel } = location.state || {};
 
   const handleCompareDatasets = () => {
     setView('datasets'); // Show the datasets container
@@ -56,10 +58,10 @@ export default function Compare(props) {
           Compare Datasets across different condition.<br />
         </Typography>
         <Typography variant="h7" sx={{ color: 'text.secondary' }}>
-        Compare cell type distributions in different predictions.<br />
+        To compare run Annotate and Plot between datasets first.<br />
         </Typography>
         </Box>
-        <Box
+        {/* <Box
           sx={{
             display: 'flex',
             flexDirection: 'row',
@@ -72,11 +74,14 @@ export default function Compare(props) {
           <Button onClick={handleComparePredictions} variant="contained">
             Compare Predictions
           </Button>
-        </Box>
+        </Box> */}
       
-      <Box sx={{ height: '100%', width: '100%', p: 3 }}>
+      {/* <Box sx={{ height: '100%', width: '100%', p: 3 }}>
       {view === 'datasets' && <DatasetComparison />}
       {view === 'predictions' && <PredictionComparison />}
+        </Box> */}
+        <Box sx={{ height: '100%', width: '100%', p: 3 }}>
+      <PredictionComparison selectedModel={selectedModel}/>
         </Box>
     </Container>
       </div>

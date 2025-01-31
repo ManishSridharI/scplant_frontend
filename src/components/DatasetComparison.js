@@ -199,7 +199,7 @@ export default function DatasetComparison() {
   return (
     <Container>
       <Typography variant="h5" component="h2" sx={{paddingBottom:'20px'}}>
-        Compare Datsets
+        Control vs Treatment
       </Typography>
       <Typography  sx={{ mb: 2, fontStyle: 'italic' }}>
         *Choose Control and Condition Datasets

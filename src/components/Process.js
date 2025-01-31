@@ -46,8 +46,8 @@ const items = [
     title: 'Predictions',
     description:
       'High-throughput scRNA-seq data annotation.',
-    imageLight: `url("/results.jpeg")`,
-    imageDark: `url("/results.jpeg")`,
+    imageLight: `url("/results.jpg")`,
+    imageDark: `url("/results.jpg")`,
     description2:
     'scPlantAnnotate will annotate cell types for each dataset and generates a comprehensive output, including a CSV file of predicted cell types, cluster visualization figures using t-SNE and UMAP, and a dot-plot of cluster-specific marker genes. For multiple scRNA-seq data files with different conditions, the service also performs cross-condition analyses, such as identifying marker genes and comparing cell type distributions. The data processing tasks in the scPlantAnnotate are designed to queue and execute automatically depending on the hosting server resource availability. Results are typically available in minutes to a few hours, depending on the server resource usage. The scPlantAnnotate is optimized for high-throughput scRNA-seq data annotation to enable researchers to quickly obtain reliable and reproducible cell-type annotations without requiring extensive computational expertise. ',
     description3:
