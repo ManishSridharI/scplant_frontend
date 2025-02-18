@@ -24,6 +24,7 @@ import { AuthProvider } from './Auth';
 import Results from './pages/Results';
 import Compare from './pages/Compare';
 import Organism from './pages/Organism';
+import Plots from './components/Plots';
 
 
 export default function App(props) {
@@ -40,6 +41,7 @@ export default function App(props) {
           <Route path="/dataset" element={<Dataset />} />
           {/* <Route path="/model" element={<Model />} /> */}
           <Route path="/results" element={<Results />} />
+          <Route path='/plots' element={<Plots/>} />
           <Route path="/compare" element={<Compare />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<ContactForm />} />

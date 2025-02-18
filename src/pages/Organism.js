@@ -51,6 +51,7 @@ export default function Organism(props) {
         gap:2,
       }}
     >
+       <Typography variant="body2">Proceed to select - </Typography>
       <Button
        // onClick={handleDatasetSubmit}
         variant="contained"
@@ -61,7 +62,7 @@ export default function Organism(props) {
           cursor: (selectedModel) ? 'pointer' : 'not-allowed', // Change cursor to 'not-allowed' if disabled
         }}
       >
-        Proceed to Datasets
+        Datasets for Predictions
       </Button>
       <Button
         variant="contained"
@@ -72,7 +73,7 @@ export default function Organism(props) {
           cursor: (selectedModel) ? 'pointer' : 'not-allowed', // Change cursor to 'not-allowed' if disabled
         }}
       >
-        Proceed to Compare Predictions
+        Predictions for comparisons
       </Button>
       </Box>
 

@@ -10,6 +10,7 @@ import LooksOneIcon from '@mui/icons-material/LooksOne';
 import LooksTwoIcon from '@mui/icons-material/LooksTwo';
 import Looks3Icon from '@mui/icons-material/Looks3';
 import { styled } from '@mui/material/styles';
+import { Link } from '@mui/material';
 
 import DevicesRoundedIcon from '@mui/icons-material/DevicesRounded';
 import EdgesensorHighRoundedIcon from '@mui/icons-material/EdgesensorHighRounded';
@@ -21,8 +22,8 @@ const items = [
     title: 'Introduction',
     description:
       'scPlantAnnotate annotates cell types for plants.',
-    imageLight: `url("/introduction.png")`,
-    imageDark: `url("/introduction.png")`,
+    imageLight: `url("/workflow.png")`,
+    imageDark: `url("/workflow.png")`,
     description2:
     'Cell type annotation is fundamental for interpreting scRNA-seq data in biomedical and plant research, as it enables detailed insights into cellular composition, function, and dynamics within tissues. This understanding leads to significant insights into biology, development, and responses to environmental changes. ',
     description3:
@@ -162,7 +163,7 @@ export default function Process() {
 
   return (
     <Container id="features" sx={{ py: { xs: 8, sm: 16 } }}>
-      <Box sx={{ width: { sm: '100%', md: '60%' } }}>
+      <Box sx={{ width: { sm: '100%', md: '100%' } }}>
         <Typography
           component="h2"
           variant="h4"
@@ -175,7 +176,7 @@ export default function Process() {
           variant="h6"
           sx={{ color: 'text.secondary', mb: { xs: 2, sm: 4 } }}
         >
-          See below to understand the process of scPlantAnnotate.
+          See below to understand the process of scPlantAnnotate. (Click Here to download the <Link href="/Website_Instructions.pdf" download sx={{ color: "primary.main", textDecoration: "underline", cursor: "pointer" }}>Instruction manual</Link>)
         </Typography>
       </Box>
       <div>

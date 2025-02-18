@@ -102,6 +102,10 @@ export default function Results(props) {
     return () => clearInterval(intervalId);
   }, []);
 
+  const handlePlots = (row) => {
+    navigate('/plots', { state: { type: row.type, filesId: row.filesId } });
+  };  
+
 console.log(rows);
 const handleDownload = (row) => {
   fetchDownloadFiles(row, setLoading);
@@ -262,11 +266,24 @@ const handleDownload = (row) => {
     { field: 'type', headerName: 'Prediction Type', flex: 0.75 },
     { field: 'creationTime', headerName: 'Creation Time', flex: 0.75 },
     {
+      field: 'plots',
+      headerName: 'Plots',
+      flex: 0.4,
+      renderCell: (params) => (
+        <Button
+        onClick={() => handlePlots(params.row)}
+        variant="contained"
+        disabled={loading}      
+      >
+        Plots
+      </Button>
+      ),
+    },
+    {
       field: 'download',
       headerName: 'Download',
       flex: 0.6,
       renderCell: (params) => (
-        
         <Button
         onClick={() => handleDownload(params.row)}
         variant="contained"
@@ -338,6 +355,9 @@ const handleDownload = (row) => {
       <Box sx={{ height: '100%', width: '100%', p: 3 }}>
       <Typography  sx={{ mb: 2, fontStyle: 'italic' }}>
         *Job Results (Auto-refreshes every 30 seconds)
+      </Typography>
+      <Typography  sx={{ mb: 2, fontStyle: 'italic' }}>
+        *Please look for stderr file in results if you face any FAILURE
       </Typography>
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 }}>

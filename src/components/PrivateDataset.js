@@ -55,7 +55,7 @@ export default function PrivateData({ selectedModel, onDatasetSelect, refreshTri
           // Combine the responses from all three APIs
           const combinedData = [
             ...h5adData.H5adDataset,
-            ...rdsData.RdsDataset,
+            // ...rdsData.RdsDataset,
             ...tenxData.TenxfbcmDataset,
           ];
           console.log(combinedData);
@@ -71,7 +71,7 @@ export default function PrivateData({ selectedModel, onDatasetSelect, refreshTri
             .map((dataset) => ({
               id: dataset.id,
               dataset_name: dataset.h5ad_dataset_name || dataset.rds_dataset_name || dataset.tenxfbcm_dataset_name,
-              dataset_type: dataset.h5ad_dataset_file_extension || dataset.rds_dataset_file_extension || '10x',
+              dataset_type: (dataset.h5ad_dataset_file_extension || dataset.rds_dataset_file_extension) ? 'h5ad/rds' : '10x',
               dataset_organism: dataset.h5ad_dataset_organism || dataset.rds_dataset_organism || dataset.tenxfbcm_dataset_organism, 
               dataset_public_flag: (dataset.h5ad_dataset_public_flag || dataset.rds_dataset_public_flag || dataset.tenxfbcm_dataset_public_flag) ? 'Yes' : 'No',
               dataset_creation_timestamp: new Date(dataset.h5ad_dataset_creation_timestamp || dataset.rds_dataset_creation_timestamp || dataset.tenxfbcm_dataset_creation_timestamp).toLocaleString(),
@@ -155,8 +155,8 @@ export default function PrivateData({ selectedModel, onDatasetSelect, refreshTri
                
                 if (selectedDataset) {
                   setRowSelectionModel(selectedId);
-                  onDatasetSelect({ id: selectedId, name:selectedDataset.dataset_name, type: selectedDataset.dataset_type }); // Pass both ID and name
-                }
+                   // Pass both ID and name
+                }onDatasetSelect({ id: selectedId, name:selectedDataset.dataset_name, type: selectedDataset.dataset_type === 'h5ad/rds' ? 'h5ad' : selectedDataset.dataset_type });
               } 
             }}
             rowsPerPageOptions={[5, 10, 20]}

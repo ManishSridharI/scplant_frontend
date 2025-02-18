@@ -256,7 +256,7 @@ export default function PredictionComparison({ selectedModel }) {
           backgroundColor: (controlPrediction && condition1Prediction && jobName) ? '' : 'grey.300', // Lighter background when disabled
           cursor: (controlPrediction && condition1Prediction && jobName) ? 'pointer' : 'not-allowed', // Change cursor to 'not-allowed' if disabled
         }}>
-            Treatment vs Control
+            Proceed
         </Button>
         </Grid2>
         </Grid2>

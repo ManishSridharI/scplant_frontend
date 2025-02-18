@@ -1,34 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { getCookie } from './cookie';
 
-//const AuthContext = createContext();
-
-// export const AuthProvider = ({ children }) => {
-//   const [user, setUser ] = useState(() => {
-//     const savedUser  = localStorage.getItem('user');
-//     return savedUser  ? JSON.parse(savedUser ) : null;
-//   });
-
-//   const login = (userData) => {
-//     setUser (userData);
-//     localStorage.setItem('user', JSON.stringify(userData));
-//   };
-
-//   const logout = () => {
-//     setUser (null);
-//     localStorage.removeItem('user');
-//     // Optionally clear the token if used
-//     // localStorage.removeItem('token');
-//   };
-
-//   return (
-//     <AuthContext.Provider value={{ user, login, logout }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
-
-// export const useAuth = () => useContext(AuthContext);
 
 const AuthContext = createContext();
 
@@ -40,6 +12,9 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [csrfToken, setCsrfToken] = useState(null);
   const [authToken, setAuthToken] = useState(null);
+  const logoutTimerRef = useRef(null);
+
+  const LOGOUT_TIME = 12 * 60 * 60 * 1000; 
 
   useEffect(() => {
     // On page load, check if user info and tokens are available in localStorage
@@ -58,7 +33,41 @@ export const AuthProvider = ({ children }) => {
     if (storedAuthToken) {
       setAuthToken(storedAuthToken);
     }
+
+    startLogoutTimer(); // Start logout timer on page load
+    attachActivityListeners(); // Listen for user activity
+
+    return () => {
+      removeActivityListeners(); // Cleanup listeners on unmount
+    };
   }, []);
+
+      // Function to start logout timer
+      const startLogoutTimer = () => {
+        clearTimeout(logoutTimerRef.current);
+        logoutTimerRef.current = setTimeout(() => {
+          logout();
+        }, LOGOUT_TIME);
+      };
+
+      // Attach event listeners for user activity
+      const attachActivityListeners = () => {
+        document.addEventListener('mousemove', resetLogoutTimer);
+        document.addEventListener('keydown', resetLogoutTimer);
+        document.addEventListener('click', resetLogoutTimer);
+      };
+
+      // Remove event listeners (cleanup)
+      const removeActivityListeners = () => {
+        document.removeEventListener('mousemove', resetLogoutTimer);
+        document.removeEventListener('keydown', resetLogoutTimer);
+        document.removeEventListener('click', resetLogoutTimer);
+      };
+
+      // Reset timer on user activity
+      const resetLogoutTimer = () => {
+        startLogoutTimer();
+      };
 
   const login = (userData, csrfToken, authToken) => {
     setUser(userData);
@@ -68,6 +77,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('authToken', authToken);
     // Store csrf token in a cookie (if not already done in your app)
     document.cookie = `csrftoken=${csrfToken}; path=/;`;
+    startLogoutTimer();
   };
 
   const logout = () => {
@@ -78,6 +88,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('authToken');
     // Optionally, remove the csrf token from the cookie
     document.cookie = 'csrftoken=; Max-Age=0; path=/;';
+    clearTimeout(logoutTimerRef.current); // Clear timer on logout
+    removeActivityListeners(); // Remove activity listeners
   };
 
   return (

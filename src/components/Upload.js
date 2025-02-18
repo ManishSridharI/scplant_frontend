@@ -139,6 +139,9 @@ export default function Upload({ selectedModel, onDatasetUploadRefresh }) {
           } else {
             console.log('File uploaded successfully:');
             onDatasetUploadRefresh();
+            if (fileType === "rds" && data.RdsDatasetUpload) {
+              triggerRdsToH5adConversion(data.RdsDatasetUpload.id);
+            }
           }
         })
         .catch((error) => {
@@ -147,6 +150,90 @@ export default function Upload({ selectedModel, onDatasetUploadRefresh }) {
         });
     }
   };
+
+  const triggerRdsToH5adConversion = (rdsDatasetId) => {
+    const conversionPayload = {
+      "job_name": `Convert_RDS_${rdsDatasetId}`,
+      "job_script": 5,
+      "job_rds_dataset": rdsDatasetId,
+      "job_convert_rds_to_h5ad_stdout_filename": "Stdout001",
+      "job_convert_rds_to_h5ad_stderr_filename": "Stderr001"
+    };
+  
+    fetch("/api/jobs/api/job_convert_rds_to_h5ad/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrfToken, // Set CSRF token in the header
+      },
+      credentials: "include",
+      body: JSON.stringify(conversionPayload),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        console.error("RDS to H5AD conversion failed:", data.error);
+        setErrorMessage("RDS to H5AD conversion failed.");
+      } else {
+        console.log("RDS to H5AD conversion initiated successfully:", data);
+        // deleteRdsDataset(rdsDatasetId);
+      }
+    })
+    .catch(error => {
+      console.error("Error triggering RDS to H5AD conversion:", error);
+      setErrorMessage("Error triggering RDS to H5AD conversion.");
+    });
+  };
+
+    // Function to delete the RDS dataset after successful conversion
+const deleteRdsDataset = (rdsDatasetId) => {
+  const deletePayload = {
+    "rds_dataset_id": rdsDatasetId
+  };
+
+  fetch("/api/rdsdatasets/api/rds_dataset_delete/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken, // Set CSRF token in the header
+    },
+    credentials: "include",
+    body: JSON.stringify(deletePayload),
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      console.error("Error deleting RDS dataset:", data.error);
+      setErrorMessage("Error deleting RDS dataset.");
+    } else {
+      console.log("RDS dataset deleted successfully:", data);
+    }
+  })
+  .catch(error => {
+    console.error("Error in RDS dataset deletion:", error);
+    setErrorMessage("Error in RDS dataset deletion.");
+  });
+};
+
+    // Check for pending deletions on page load
+    const checkPendingDeletions = () => {
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith("delete_rds_")) {
+          const { id, timestamp } = JSON.parse(localStorage.getItem(key));
+          const elapsed = Date.now() - timestamp;
+
+          if (elapsed >= 180000) { // If 3 minutes have passed
+            deleteRdsDataset(id);
+          } else {
+            // Schedule deletion for the remaining time
+            setTimeout(() => deleteRdsDataset(id), 180000 - elapsed);
+          }
+        }
+      });
+    };
+
+    // Run the check when the page loads
+    window.addEventListener("load", checkPendingDeletions);
   
   return (
     <Container
